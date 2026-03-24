@@ -6,6 +6,9 @@ import 'edit_profile_screen.dart';
 import 'addresses_screen.dart';
 import 'bank_accounts_screen.dart';
 import 'settings_detail_screens.dart';
+import 'referral_screen.dart';
+import 'support_screen.dart';
+import 'legal_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -84,7 +87,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildMenuItem(Icons.security_rounded, 'Security', 'Password and biometric settings', () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const SecurityScreen()));
             }),
-            _buildMenuItem(Icons.help_outline_rounded, 'Help & Support', 'Get assistance with your account', () {}),
+            _buildMenuItem(Icons.share_outlined, 'Refer & Earn', 'Invite friends and earn gold rewards', () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferralScreen()));
+            }),
+            _buildMenuItem(Icons.help_outline_rounded, 'Help & Support', 'Get assistance with your account', () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const SupportScreen()));
+            }),
+            _buildMenuItem(Icons.gavel_rounded, 'Legal', 'Privacy policy and terms of service', () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const LegalScreen()));
+            }),
             
             const SizedBox(height: 24),
             

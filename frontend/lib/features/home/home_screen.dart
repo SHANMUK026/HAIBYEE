@@ -15,6 +15,8 @@ import '../portfolio/withdraw_screen.dart';
 import '../invest/wealth_calculator.dart';
 import '../invest/savings_plan_screen.dart';
 import '../profile/kyc_screen.dart';
+import '../profile/referral_screen.dart';
+import '../profile/support_screen.dart';
 import '../../utils/price_data.dart';
 import '../../utils/extensions.dart';
 import '../../utils/app_state.dart';
@@ -356,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.headset_mic_outlined, color: Color(0xFF111827), size: 22),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
-                onPressed: () {},
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SupportScreen())),
               ),
               const SizedBox(width: 16),
               IconButton(
@@ -1100,33 +1102,36 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 28),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFD4AF37), Color(0xFFFCD34D)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFD4AF37).withOpacity(0.3), 
-                  blurRadius: 15, 
-                  offset: const Offset(0, 6)
-                )
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Start Referring, Start Earning',
-                  style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferralScreen())),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFD4AF37), Color(0xFFFCD34D)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                const SizedBox(width: 10),
-                const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
-              ],
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFD4AF37).withOpacity(0.3), 
+                    blurRadius: 15, 
+                    offset: const Offset(0, 6)
+                  )
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Start Referring, Start Earning',
+                    style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(width: 10),
+                  const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+                ],
+              ),
             ),
           ),
         ],
@@ -1277,57 +1282,60 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         border: Border.all(color: const Color(0xFFE2E8F0).withOpacity(0.5)),
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFEF3C7), 
-              shape: BoxShape.circle
+      child: InkWell(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SupportScreen())),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF3C7), 
+                shape: BoxShape.circle
+              ),
+              child: const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFFD4AF37), size: 22),
             ),
-            child: const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFFD4AF37), size: 22),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Contact Support', 
-                  style: GoogleFonts.inter(
-                    fontSize: 14, 
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF111827)
-                  )
-                ),
-                Text(
-                  "Need help? We're online", 
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF6B7280), 
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500
-                  )
-                ),
-              ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Contact Support', 
+                    style: GoogleFonts.inter(
+                      fontSize: 14, 
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF111827)
+                    )
+                  ),
+                  Text(
+                    "Need help? We're online", 
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF6B7280), 
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500
+                    )
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFEF3C7), 
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3)),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF3C7), 
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3)),
+              ),
+              child: Text(
+                'LIVE CHAT', 
+                style: GoogleFonts.inter(
+                  color: const Color(0xFFD4AF37), 
+                  fontSize: 10, 
+                  fontWeight: FontWeight.w800
+                )
+              ),
             ),
-            child: Text(
-              'LIVE CHAT', 
-              style: GoogleFonts.inter(
-                color: const Color(0xFFD4AF37), 
-                fontSize: 10, 
-                fontWeight: FontWeight.w800
-              )
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

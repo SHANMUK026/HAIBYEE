@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
 class ApiService {
-  // Set your computer's local IP here if testing on a physical mobile device
-  // e.g., '192.168.1.5' or '10.0.2.2' for Android emulators
-  static const String _ip = 'localhost'; 
+  static const String _ip = 'haibyee.up.railway.app';
   
-  static String get _baseUrl => 'http://$_ip:3000/api';
+  static String get _baseUrl => 'https://$_ip/api';
 
   final Dio _dio = Dio(BaseOptions(
     baseUrl: _baseUrl,

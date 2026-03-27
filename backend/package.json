@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
-    "build": "tsc"
+    "build": "tsc && npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "6.2.1",

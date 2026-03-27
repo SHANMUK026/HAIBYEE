@@ -5,10 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "prisma db push --skip-generate && node dist/index.js",
     "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
-    "build": "tsc && npx prisma generate",
-    "postinstall": "prisma db push --skip-generate"
+    "build": "tsc && npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "6.2.1",

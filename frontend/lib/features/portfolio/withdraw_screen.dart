@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../utils/price_data.dart';
 import '../../utils/extensions.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 
 class WithdrawScreen extends StatefulWidget {
   final bool isGoldInitial;
@@ -101,13 +102,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: isGold 
-                    ? [const Color(0xFFD4AF37), const Color(0xFFF7E37B)]
+                    ? [const Color(0xFFC8A27B), const Color(0xFFD2B494)]
                     : [const Color(0xFF334155), const Color(0xFF475569)],
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: (isGold ? const Color(0xFFD4AF37) : const Color(0xFF334155)).withOpacity(0.3),
+                    color: (isGold ? const Color(0xFFC8A27B) : const Color(0xFF334155)).withOpacity(0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -177,7 +178,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               suffix: Text(
                 'MAX',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFB59310),
+                  color: AppColors.primaryBrownGold,
                   fontWeight: FontWeight.w800,
                   fontSize: 12,
                 ),

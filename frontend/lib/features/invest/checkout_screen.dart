@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../home/home_screen.dart';
 import '../../utils/extensions.dart';
+import '../../theme/app_colors.dart';
 
 class CheckoutScreen extends StatelessWidget {
   final bool isGold;
@@ -94,7 +95,7 @@ class CheckoutScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isGold ? const Color(0xFFFFF9E5) : const Color(0xFFF1F5F9),
+              color: isGold ? const Color(0xFFF5EDE3) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -105,14 +106,14 @@ class CheckoutScreen extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12, 
                     fontWeight: FontWeight.w700, 
-                    color: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)
+                    color: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)
                   ),
                 ),
                 const SizedBox(width: 4),
                 Icon(
                   Icons.arrow_outward_rounded, 
                   size: 14, 
-                  color: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)
+                  color: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)
                 ),
               ],
             ),
@@ -204,7 +205,7 @@ class CheckoutScreen extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 12, 
               fontWeight: FontWeight.w700, 
-              color: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)
+              color: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)
             ),
           ),
           const SizedBox(width: 4),
@@ -231,7 +232,7 @@ class CheckoutScreen extends StatelessWidget {
           ),
           child: Icon(
             icon, 
-            color: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B), 
+            color: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B), 
             size: 28
           ),
         ),
@@ -263,11 +264,11 @@ class CheckoutScreen extends StatelessWidget {
   Widget _buildLimitNotice() {
     return Container(
       width: double.infinity,
-      color: const Color(0xFFFFF9E5),
+      color: const Color(0xFFF5EDE3),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, size: 16, color: Color(0xFFD4AF37)),
+          const Icon(Icons.info_outline, size: 16, color: Color(0xFFC8A27B)),
           const SizedBox(width: 10),
           Text(
             'Pay via UPI is allowed for investments under ₹1 lakh',
@@ -293,7 +294,7 @@ class CheckoutScreen extends StatelessWidget {
               Icon(
                 Icons.verified_user_rounded, 
                 size: 16, 
-                color: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)
+                color: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)
               ),
               const SizedBox(width: 8),
               Text(
@@ -301,7 +302,7 @@ class CheckoutScreen extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 12, 
                   fontWeight: FontWeight.w600, 
-                  color: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)
+                  color: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)
                 ),
               ),
             ],
@@ -312,7 +313,7 @@ class CheckoutScreen extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: isLarge ? const Color(0xFFE2E8F0) : (isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)),
+                backgroundColor: isLarge ? const Color(0xFFE2E8F0) : (isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)),
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 elevation: 0,
@@ -367,7 +368,7 @@ class CheckoutScreen extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B),
+                  backgroundColor: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),

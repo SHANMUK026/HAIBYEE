@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'otp_verification_screen.dart';
+import '../../theme/app_colors.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -40,8 +41,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFFD4AF37),
+            colorScheme: ColorScheme.light(
+              primary: AppColors.primaryBrownGold,
               onPrimary: Colors.white,
               onSurface: Color(0xFF1A1C1C),
             ),
@@ -118,14 +119,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Create your account',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF1A1C1C),
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.60,
-                        ),
+                      'SILVRA',
+                      style: GoogleFonts.manrope(
+                        color: AppColors.primaryBrownGold,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 2.0,
                       ),
+                    ),
                       const SizedBox(height: 8),
                       Text(
                         'Please provide your details to begin your journey.',
@@ -185,7 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            color: const Color(0xFFD0C5AF),
+                            color: AppColors.primaryBrownGold,
                           ),
                           onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
                         ),
@@ -193,32 +194,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 32),
                       
                       // Create Account Button
-                      _buildGradientButton(),
+                      // _buildGradientButton(), // Removed as per user request
                       
-                      const SizedBox(height: 24),
-                      
-                      // Terms Link
-                      Center(
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFF4D4635),
-                              fontSize: 12,
-                            ),
-                            children: [
-                              const TextSpan(text: 'By joining, you agree to our '),
-                              TextSpan(
-                                text: 'Terms of Gold Custody',
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFF735C00),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+                      const SizedBox(height: 32),
+                    
+                    // Register Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: _handleRegister,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryBrownGold,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          'Register',
+                          style: GoogleFonts.manrope(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
+                    ),
                     ],
                   ),
                 ),
@@ -296,22 +298,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
           style: GoogleFonts.inter(color: const Color(0xFF1A1C1C)),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: GoogleFonts.inter(color: const Color(0xFFD0C5AF)),
+            hintStyle: GoogleFonts.inter(color: AppColors.accentBrownGold.withOpacity(0.5)),
             filled: true,
             fillColor: const Color(0xFFF3F3F3),
             suffixIcon: suffixIcon,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0x4CD0C5AF)),
+              borderSide: BorderSide(color: AppColors.primaryBrownGold.withOpacity(0.2)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0x4CD0C5AF)),
+              borderSide: BorderSide(color: AppColors.primaryBrownGold.withOpacity(0.2)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFD4AF37)),
+              borderSide: BorderSide(color: AppColors.primaryBrownGold),
             ),
           ),
         ),
@@ -340,7 +342,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF3F3F3),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0x4CD0C5AF)),
+                border: Border.all(color: AppColors.primaryBrownGold.withOpacity(0.2)),
               ),
               child: Text(
                 '+91',
@@ -360,17 +362,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 style: GoogleFonts.inter(color: const Color(0xFF1A1C1C)),
                 decoration: InputDecoration(
                   hintText: '(555) 000-0000',
-                  hintStyle: GoogleFonts.inter(color: const Color(0xFFD0C5AF)),
+                  hintStyle: GoogleFonts.inter(color: AppColors.accentBrownGold.withOpacity(0.5)),
                   filled: true,
                   fillColor: const Color(0xFFF3F3F3),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0x4CD0C5AF)),
+                    borderSide: BorderSide(color: AppColors.primaryBrownGold.withOpacity(0.2)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0x4CD0C5AF)),
+                    borderSide: BorderSide(color: AppColors.primaryBrownGold.withOpacity(0.2)),
                   ),
                 ),
               ),
@@ -390,6 +392,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             MaterialPageRoute(
               builder: (context) => OtpVerificationScreen(
                 phoneNumber: '+91 ${_phoneController.text}',
+                name: _nameController.text,
+                email: _emailController.text,
               ),
             ),
           );
@@ -399,15 +403,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment(0.20, -0.99),
-            end: Alignment(0.80, 1.99),
-            colors: [Color(0xFFD4AF37), Color(0xFFF7E37B)],
-          ),
+          color: AppColors.primaryBrownGold,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFD4AF37).withOpacity(0.3),
+              color: AppColors.primaryBrownGold.withOpacity(0.3),
               blurRadius: 15,
               offset: const Offset(0, 10),
               spreadRadius: -3,
@@ -418,7 +418,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Text(
             'Create account',
             style: GoogleFonts.inter(
-              color: const Color(0xFF241A00),
+              color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -431,7 +431,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildFooter() {
     return Column(
       children: [
-        const Divider(color: Color(0x33D0C5AF)),
+        Divider(color: AppColors.primaryBrownGold.withOpacity(0.1)),
         Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -469,5 +469,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
         fontSize: 12,
       ),
     );
+  }
+
+  void _handleRegister() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OtpVerificationScreen(
+            phoneNumber: '+91 ${_phoneController.text}',
+            name: _nameController.text,
+            email: _emailController.text,
+          ),
+        ),
+      );
+    }
   }
 }

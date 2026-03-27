@@ -80,7 +80,7 @@
                   width: 48,
                   height: 48,
                   decoration: const BoxDecoration(
-                    color: AppColors.primaryGold,
+                    color: AppColors.primaryBrownGold,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

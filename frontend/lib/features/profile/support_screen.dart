@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../theme/app_colors.dart';
 
 class SupportScreen extends StatelessWidget {
   const SupportScreen({super.key});
@@ -45,8 +46,8 @@ class SupportScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(color: Color(0xFFFEF3C7), shape: BoxShape.circle),
-            child: const Icon(Icons.headset_mic_rounded, color: Color(0xFFD4AF37), size: 40),
+            decoration: const BoxDecoration(color: Color(0xFFF5EDE3), shape: BoxShape.circle),
+            child: Icon(Icons.headset_mic_rounded, color: AppColors.primaryBrownGold, size: 40),
           ),
           const SizedBox(height: 24),
           Text(
@@ -73,7 +74,7 @@ class SupportScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _buildSupportTile('Email Support', 'support@silvra.com', Icons.alternate_email_rounded, const Color(0xFF2563EB)),
           const SizedBox(height: 12),
-          _buildSupportTile('Call Us', '+91 1800-456-789', Icons.phone_in_talk_rounded, const Color(0xFFD4AF37)),
+          _buildSupportTile('Call Us', '+91 1800-456-789', Icons.phone_in_talk_rounded, AppColors.primaryBrownGold),
         ],
       ),
     );

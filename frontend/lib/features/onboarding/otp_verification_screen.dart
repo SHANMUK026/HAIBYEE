@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import '../home/home_screen.dart';
+import '../../core/api_service.dart';
+import '../../theme/app_colors.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phoneNumber;
-  const OtpVerificationScreen({super.key, required this.phoneNumber});
+  final String? name;
+  final String? email;
+  const OtpVerificationScreen({
+    super.key,
+    required this.phoneNumber,
+    this.name,
+    this.email,
+  });
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -21,6 +30,23 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     super.initState();
     _startTimer();
+    _sendOtp();
+  }
+
+  Future<void> _sendOtp() async {
+    try {
+      // Clean phone number: remove '+', spaces, and dashes
+      String cleanPhone = widget.phoneNumber.replaceAll(RegExp(r'[\+\s\-]'), '');
+      // If starts with 91, keep it. If length 10, add 91.
+      if (cleanPhone.length == 10) {
+        cleanPhone = '91$cleanPhone';
+      }
+      await ApiService().sendOtp(cleanPhone);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send OTP: $e')),
+      );
+    }
   }
 
   void _startTimer() {
@@ -131,7 +157,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFD4AF37), width: 2),
+                              borderSide: BorderSide(color: AppColors.primaryBrownGold, width: 2),
                             ),
                           ),
                           onChanged: (value) {
@@ -171,7 +197,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                   TextSpan(
                                     text: _timerText,
                                     style: GoogleFonts.inter(
-                                      color: const Color(0xFFD4AF37),
+                                      color: AppColors.primaryBrownGold,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -190,11 +216,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             });
                           } : null,
                           child: Text(
-                            "Didn't receive the code? Check Spam",
-                            style: GoogleFonts.publicSans(
-                              color: _secondsRemaining == 0 ? const Color(0xFF2D5A3F) : const Color(0xFF94A3B8),
+                            'Resend OTP',
+                            style: GoogleFonts.inter(
+                              color: _secondsRemaining == 0 ? AppColors.primaryBrownGold : const Color(0xFF6B7280),
                               fontSize: 14,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
@@ -205,40 +231,25 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   const SizedBox(height: 48),
                   
                   // Verify Button
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HomeScreen()),
-                        (route) => false,
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFFD4AF37), Color(0xFFF7E37B)],
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: _isOtpComplete() ? _verifyOtp : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBrownGold,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: AppColors.primaryBrownGold.withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFD4AF37).withOpacity(0.3),
-                            blurRadius: 15,
-                            offset: const Offset(0, 10),
-                          )
-                        ],
+                        elevation: 0,
                       ),
-                      child: Center(
-                        child: Text(
-                          'Verify & Proceed',
-                          style: GoogleFonts.manrope(
-                            color: const Color(0xFF5B4B00),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      child: Text(
+                        'Verify & Continue',
+                        style: GoogleFonts.manrope(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -280,11 +291,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
             const SizedBox(width: 8),
             Text(
-              'Verification',
+              'SILVRA',
               style: GoogleFonts.manrope(
-                color: const Color(0xFF18181B),
+                color: AppColors.primaryBrownGold,
                 fontSize: 18,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 2.0,
               ),
             ),
           ],
@@ -323,5 +335,43 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         ),
       ],
     );
+  }
+
+  bool _isOtpComplete() {
+    return _controllers.every((controller) => controller.text.isNotEmpty);
+  }
+
+  Future<void> _verifyOtp() async {
+    String otp = _controllers.map((c) => c.text).join();
+    
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      // Clean phone number: remove '+', spaces, and dashes
+      String cleanPhone = widget.phoneNumber.replaceAll(RegExp(r'[\+\s\-]'), '');
+      if (cleanPhone.length == 10) cleanPhone = '91$cleanPhone';
+
+      await ApiService().verifyOtp(cleanPhone, otp);
+      
+      if (mounted) {
+        Navigator.pop(context); // Close loading
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Close loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Verification failed: $e')),
+        );
+      }
+    }
   }
 }

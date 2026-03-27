@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'savings_plan_screen.dart';
 import '../../utils/price_data.dart';
+import '../../theme/app_colors.dart';
 import 'summary_screen.dart';
 
 class WealthCalculator extends StatefulWidget {
@@ -54,8 +55,8 @@ class _WealthCalculatorState extends State<WealthCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = isGold ? const Color(0xFFFFD709) : const Color(0xFF1F2937);
-    final bgFade = isGold ? const Color(0xFFFFFBEB) : const Color(0xFFF3F4F6);
+    final themeColor = isGold ? AppColors.primaryBrownGold : const Color(0xFF1F2937);
+    final bgFade = isGold ? const Color(0xFFF5EDE3) : const Color(0xFFF3F4F6);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -125,14 +126,14 @@ class _WealthCalculatorState extends State<WealthCalculator> {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: active ? (label == 'GOLD' ? const Color(0xFFFFD709) : const Color(0xFF111827)) : Colors.transparent,
+            color: active ? (label == 'GOLD' ? AppColors.primaryBrownGold : const Color(0xFF111827)) : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),
           alignment: Alignment.center,
           child: Text(
             label,
             style: GoogleFonts.inter(
-              color: active ? (label == 'GOLD' ? const Color(0xFF1F2937) : Colors.white) : const Color(0xFF9CA3AF),
+              color: active ? (label == 'GOLD' ? Colors.white : Colors.white) : const Color(0xFF9CA3AF),
               fontSize: 12,
               fontWeight: FontWeight.w800,
               letterSpacing: 1,
@@ -570,7 +571,7 @@ class _WealthCalculatorState extends State<WealthCalculator> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: themeColor,
-            foregroundColor: isGold ? const Color(0xFF1F2937) : Colors.white,
+            foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 0,

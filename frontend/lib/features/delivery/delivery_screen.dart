@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../utils/price_data.dart';
 import '../../utils/extensions.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 
 class DeliveryScreen extends StatefulWidget {
   final bool isGoldInitial;
@@ -68,7 +69,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             _buildSectionHeader('SELECT METAL TYPE'),
             Row(
               children: [
-                Expanded(child: _buildMetalCard('Gold', Icons.workspace_premium_rounded, const Color(0xFFD4AF37), true)),
+                Expanded(child: _buildMetalCard('Gold', Icons.workspace_premium_rounded, AppColors.primaryBrownGold, true)),
                 const SizedBox(width: 16),
                 Expanded(child: _buildMetalCard('Silver', Icons.layers_rounded, const Color(0xFF64748B), false)),
               ],
@@ -166,7 +167,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   child: Text(
                     'Change',
                     style: GoogleFonts.manrope(
-                      color: const Color(0xFFD4AF37),
+                      color: AppColors.primaryBrownGold,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
@@ -186,10 +187,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF8FAFC),
+                      color: const Color(0xFFF5EDE3),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.location_on_rounded, color: Color(0xFFD4AF37), size: 20),
+                    child: Icon(Icons.location_on_rounded, color: AppColors.primaryBrownGold, size: 20),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -234,7 +235,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                        Text(
                          totalToPay > 0 ? '₹${totalToPay.toLocaleString()}' : '0.00 g',
                          style: GoogleFonts.manrope(
-                           color: const Color(0xFFD4AF37),
+                           color: AppColors.primaryBrownGold,
                            fontSize: 20,
                            fontWeight: FontWeight.w800,
                          ),
@@ -251,7 +252,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             ElevatedButton(
               onPressed: _processDelivery,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF111827),
+                backgroundColor: AppColors.primaryBrownGold,
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 64),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -325,7 +326,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
         color: selected ? Colors.white : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: selected ? const Color(0xFFD4AF37) : const Color(0xFFE2E8F0),
+          color: selected ? AppColors.primaryBrownGold : const Color(0xFFE2E8F0),
           width: 2,
         ),
       ),
@@ -334,10 +335,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: selected ? const Color(0xFFFFF7ED) : const Color(0xFFF8FAFC),
+              color: selected ? const Color(0xFFF5EDE3) : const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: selected ? const Color(0xFFD4AF37) : const Color(0xFF94A3B8), size: 24),
+            child: Icon(icon, color: selected ? AppColors.primaryBrownGold : const Color(0xFF94A3B8), size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -359,7 +360,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
               ],
             ),
           ),
-          if (selected) const Icon(Icons.check_circle_rounded, color: Color(0xFFD4AF37), size: 24),
+          if (selected) Icon(Icons.check_circle_rounded, color: AppColors.primaryBrownGold, size: 24),
         ],
       ),
     );
@@ -407,8 +408,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             )).toList(),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.add_location_alt_outlined, color: Color(0xFFD4AF37)),
-              title: Text('Add New Address', style: GoogleFonts.manrope(color: const Color(0xFFD4AF37), fontWeight: FontWeight.w700)),
+              leading: Icon(Icons.add_location_alt_outlined, color: AppColors.primaryBrownGold),
+              title: Text('Add New Address', style: GoogleFonts.manrope(color: AppColors.primaryBrownGold, fontWeight: FontWeight.w700)),
               onTap: () {
                 // Mock add logic
                 Navigator.pop(context);
@@ -459,20 +460,14 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (payWithVault) {
-                    setState(() {
-                      if (isGold) {
-                        AppState().goldGrams -= gramsFromVault;
-                      } else {
-                        AppState().silverGrams -= gramsFromVault;
-                      }
-                    });
+                  if (totalToPay > 0) {
+                    // Logic for initiating payment
                   }
                   Navigator.pop(context); // Pop dialog
                   Navigator.pop(context); // Pop DeliveryScreen
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF111827),
+                  backgroundColor: AppColors.primaryBrownGold,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

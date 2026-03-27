@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'otp_verification_screen.dart';
+import '../../theme/app_colors.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -106,15 +107,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 width: double.infinity,
                 height: 60,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFFD4AF37), Color(0xFFF7E37B)],
+                    colors: [AppColors.primaryBrownGold, AppColors.accentBrownGold],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFD4AF37).withOpacity(0.3),
+                      color: AppColors.primaryBrownGold.withOpacity(0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     )
@@ -124,7 +125,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   child: Text(
                     'Send OTP',
                     style: GoogleFonts.manrope(
-                      color: const Color(0xFF5B4B00),
+                      color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),

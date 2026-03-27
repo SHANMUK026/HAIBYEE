@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../home/home_screen.dart';
-import '../../utils/extensions.dart';
+import 'package:frontend/utils/formatters.dart';
 import '../../utils/price_data.dart';
 import '../../widgets/price_chart.dart';
+import '../../theme/app_colors.dart';
 import 'summary_screen.dart';
 
 class InvestScreen extends StatefulWidget {
@@ -114,7 +115,7 @@ class _InvestScreenState extends State<InvestScreen> {
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 10, 20, 40),
       decoration: BoxDecoration(
-        color: widget.isGold ? const Color(0xFFFFF9E5) : const Color(0xFF0F172A), // Gold Cream vs Deep Slate
+        color: widget.isGold ? const Color(0xFFF5EDE3) : const Color(0xFF0F172A), // Premium Cream vs Deep Slate
       ),
       child: Column(
         children: [
@@ -146,7 +147,7 @@ class _InvestScreenState extends State<InvestScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '₹${(amount * 1.29).toLocaleString()}', // Dynamic projection (~29% return)
+              '₹${formatRupee(amount * 1.29)}', // Dynamic projection (~29% return)
               style: GoogleFonts.manrope(fontSize: 42, fontWeight: FontWeight.w800, color: const Color(0xFF111827)),
             ),
             const SizedBox(height: 12),
@@ -155,9 +156,9 @@ class _InvestScreenState extends State<InvestScreen> {
                 style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF64748B), fontWeight: FontWeight.w500),
                 children: [
                   const TextSpan(text: 'Investment: '),
-                  TextSpan(text: '₹${amount.toLocaleString()}', style: const TextStyle(color: Color(0xFF111827), fontWeight: FontWeight.w700)),
+                  TextSpan(text: '₹${formatRupee(amount)}', style: TextStyle(color: Color(0xFF111827), fontWeight: FontWeight.w700)),
                   const TextSpan(text: '  |  Earning: '),
-                  TextSpan(text: '₹${(amount * 0.29).toLocaleString()} 🥳', style: const TextStyle(color: Color(0xFF111827), fontWeight: FontWeight.w700)),
+                  TextSpan(text: '₹${formatRupee(amount * 0.29)} 🥳', style: TextStyle(color: Color(0xFF111827), fontWeight: FontWeight.w700)),
                 ],
               ),
             ),
@@ -219,7 +220,7 @@ class _InvestScreenState extends State<InvestScreen> {
             Icon(
               Icons.auto_graph_rounded, 
               size: 14, 
-              color: widget.isGold ? const Color(0xFFD97706) : const Color(0xFF94A3B8)
+              color: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF94A3B8)
             ),
             const SizedBox(width: 8),
             Text(
@@ -234,7 +235,7 @@ class _InvestScreenState extends State<InvestScreen> {
             Icon(
               Icons.arrow_outward_rounded, 
               size: 14, 
-              color: widget.isGold ? const Color(0xFFD97706) : const Color(0xFF94A3B8)
+              color: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF94A3B8)
             ),
           ],
         ),
@@ -291,7 +292,7 @@ class _InvestScreenState extends State<InvestScreen> {
             Expanded(
               child: PriceChart(
                 isGold: widget.isGold,
-                lineColor: widget.isGold ? const Color(0xFFF59E0B) : const Color(0xFF475569),
+                lineColor: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF475569),
               ),
             ), 
             const SizedBox(height: 40),
@@ -300,7 +301,7 @@ class _InvestScreenState extends State<InvestScreen> {
               child: ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B),
+                  backgroundColor: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B),
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
@@ -317,7 +318,7 @@ class _InvestScreenState extends State<InvestScreen> {
     return Container(
       height: 140,
       width: double.infinity,
-      color: widget.isGold ? const Color(0xFFFFF9E5) : const Color(0xFF0F172A),
+      color: widget.isGold ? const Color(0xFFF5EDE3) : const Color(0xFF0F172A),
       alignment: Alignment.bottomCenter,
       child: Image.asset(
         widget.isGold ? 'assets/gold_bars_stack.png' : 'assets/silver_bars_stack.png',
@@ -325,7 +326,7 @@ class _InvestScreenState extends State<InvestScreen> {
         errorBuilder: (context, _, __) => Icon(
           Icons.layers_rounded, 
           size: 80, 
-          color: widget.isGold ? const Color(0xFFD4AF37) : const Color(0xFF94A3B8)
+          color: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF94A3B8)
         ),
       ),
     );
@@ -349,7 +350,7 @@ class _InvestScreenState extends State<InvestScreen> {
   }
 
   Widget _buildToggleItem(String label, bool isSelected, VoidCallback onTap) {
-    final accentColor = widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B);
+    final accentColor = widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B);
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -373,7 +374,7 @@ class _InvestScreenState extends State<InvestScreen> {
 
   Widget _buildFrequencySelector() {
     final frequencies = ['Daily', 'Monthly', 'Weekly'];
-    final accentColor = widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B);
+    final accentColor = widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: frequencies.map((f) {
@@ -468,7 +469,7 @@ class _InvestScreenState extends State<InvestScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
-                      'Amount payable: ₹${amount.toLocaleString()}',
+                      'Amount payable: ₹${formatRupee(amount)}',
                       style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF64748B), fontWeight: FontWeight.w500),
                     ),
                   ),
@@ -482,7 +483,7 @@ class _InvestScreenState extends State<InvestScreen> {
   }
 
   Widget _buildCircularIcon(IconData icon, VoidCallback onTap) {
-    final accentColor = widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B);
+    final accentColor = widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -497,7 +498,7 @@ class _InvestScreenState extends State<InvestScreen> {
   }
 
   Widget _buildSlider() {
-    final accentColor = widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B);
+    final accentColor = widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B);
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         activeTrackColor: accentColor,
@@ -542,7 +543,7 @@ class _InvestScreenState extends State<InvestScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF9E5),
+        color: const Color(0xFFF5EDE3),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -550,7 +551,7 @@ class _InvestScreenState extends State<InvestScreen> {
           Checkbox(
             value: stepUpEnabled, 
             onChanged: (v) => setState(() => stepUpEnabled = v!),
-            activeColor: widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B),
+            activeColor: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B),
           ),
           Expanded(
             child: Text(
@@ -563,14 +564,14 @@ class _InvestScreenState extends State<InvestScreen> {
             style: GoogleFonts.inter(
               fontSize: 13, 
               fontWeight: FontWeight.w700, 
-              color: widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)
+              color: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)
             ),
           ),
           const SizedBox(width: 4),
           Icon(
             Icons.edit, 
             size: 14, 
-            color: widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B)
+            color: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)
           ),
         ],
       ),
@@ -592,7 +593,7 @@ class _InvestScreenState extends State<InvestScreen> {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: widget.isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B),
+          backgroundColor: widget.isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B),
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,

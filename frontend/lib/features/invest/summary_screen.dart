@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../home/home_screen.dart';
 import '../../utils/extensions.dart';
 import 'checkout_screen.dart';
+import '../../theme/app_colors.dart';
 
 class SummaryScreen extends StatelessWidget {
   final bool isGold;
@@ -42,7 +43,7 @@ class SummaryScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              color: const Color(0xFFFAF7F5),
+              color: const Color(0xFFF5EDE3),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -125,7 +126,7 @@ class SummaryScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: isGold ? const Color(0xFFB45309) : const Color(0xFF1E293B),
+              backgroundColor: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B),
               padding: const EdgeInsets.symmetric(vertical: 18),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               elevation: 0,

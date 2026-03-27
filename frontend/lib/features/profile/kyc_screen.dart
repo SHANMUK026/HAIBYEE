@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 import 'mock_identification_screens.dart';
 
 class KycScreen extends StatefulWidget {
@@ -14,7 +14,7 @@ class KycScreen extends StatefulWidget {
 class _KycScreenState extends State<KycScreen> {
   bool isDigiLockerStep = true;
   bool isVerifying = false;
-  final ImagePicker _picker = ImagePicker();
+  // Removed ImagePicker for OTP-only test
   Map<String, bool> uploadedDocs = {
     'Aadhaar Card (Front)': false,
     'Aadhaar Card (Back)': false,
@@ -56,7 +56,7 @@ class _KycScreenState extends State<KycScreen> {
             height: 60,
             child: CircularProgressIndicator(
               strokeWidth: 6,
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryBrownGold),
             ),
           ),
           const SizedBox(height: 32),
@@ -87,16 +87,16 @@ class _KycScreenState extends State<KycScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFEFF6FF),
+              color: const Color(0xFFF5EDE3),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: const Color(0xFFDBEAFE)),
+              border: Border.all(color: AppColors.primaryBrownGold.withOpacity(0.2)),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  child: const Icon(Icons.bolt_rounded, color: Color(0xFF2563EB), size: 28),
+                  child: Icon(Icons.bolt_rounded, color: AppColors.primaryBrownGold, size: 28),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -108,7 +108,7 @@ class _KycScreenState extends State<KycScreen> {
                         style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
-                          color: const Color(0xFF2563EB),
+                          color: AppColors.primaryBrownGold,
                           letterSpacing: 1,
                         ),
                       ),
@@ -144,7 +144,7 @@ class _KycScreenState extends State<KycScreen> {
           ElevatedButton(
             onPressed: _startVerification,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF111827),
+              backgroundColor: AppColors.primaryBrownGold,
               foregroundColor: Colors.white,
               minimumSize: const Size(double.infinity, 60),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -204,7 +204,7 @@ class _KycScreenState extends State<KycScreen> {
           ElevatedButton(
             onPressed: uploadedDocs.values.every((v) => v) ? _startVerification : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF111827),
+              backgroundColor: AppColors.primaryBrownGold,
               foregroundColor: Colors.white,
               disabledBackgroundColor: const Color(0xFFE2E8F0),
               disabledForegroundColor: const Color(0xFF94A3B8),
@@ -308,6 +308,8 @@ class _KycScreenState extends State<KycScreen> {
           children: [
             Text('Upload $label', style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w800)),
             const SizedBox(height: 32),
+            // Commented out ImagePicker options for OTP-only test
+            /*
             _buildOption(Icons.camera_alt_rounded, 'Take Photo', () async {
               Navigator.pop(context);
               final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
@@ -320,6 +322,18 @@ class _KycScreenState extends State<KycScreen> {
               if (image != null) _markUploaded(label);
             }),
             const SizedBox(height: 16),
+            */
+            /*
+            Future<void> _pickImage() async {
+              final ImagePicker picker = ImagePicker();
+              final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+              if (image != null) {
+                setState(() {
+                  _idImagePath = image.path;
+                });
+              }
+            }
+            */
             _buildOption(Icons.file_present_rounded, 'Browse Files', () {
               Navigator.pop(context);
               _markUploaded(label);
@@ -391,7 +405,7 @@ class _KycScreenState extends State<KycScreen> {
                   Navigator.pop(context); // Pop KycScreen
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF111827),
+                  backgroundColor: AppColors.primaryBrownGold,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import '../../theme/app_colors.dart';
 
 class ReferralScreen extends StatelessWidget {
   const ReferralScreen({super.key});
@@ -48,13 +49,13 @@ class ReferralScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFFFEF3C7),
+              color: const Color(0xFFF5EDE3),
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: const Color(0xFFD4AF37).withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))
+                BoxShadow(color: AppColors.primaryBrownGold.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))
               ],
             ),
-            child: const Icon(Icons.card_giftcard_rounded, color: Color(0xFFD4AF37), size: 48),
+            child: Icon(Icons.card_giftcard_rounded, color: AppColors.primaryBrownGold, size: 48),
           ),
           const SizedBox(height: 24),
           Text(
@@ -99,13 +100,13 @@ class ReferralScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(code, style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w800, color: const Color(0xFF111827), letterSpacing: 2)),
+                    Text(code, style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w800, color: const Color(0xFF111827), letterSpacing: 2)),
                 IconButton(
                   onPressed: () {
                     Clipboard.setData(const ClipboardData(text: code));
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Code copied to clipboard!')));
                   },
-                  icon: const Icon(Icons.copy_rounded, color: Color(0xFFD4AF37)),
+                  icon: Icon(Icons.copy_rounded, color: AppColors.primaryBrownGold),
                 ),
               ],
             ),
@@ -117,7 +118,7 @@ class ReferralScreen extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF111827),
+                backgroundColor: AppColors.primaryBrownGold,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
@@ -154,7 +155,7 @@ class ReferralScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: const Color(0xFFD4AF37), size: 24),
+            Icon(icon, color: AppColors.primaryBrownGold, size: 24),
             const SizedBox(height: 12),
             Text(value, style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w800)),
             Text(label, style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8))),
@@ -190,7 +191,7 @@ class ReferralScreen extends StatelessWidget {
           Container(
             width: 24,
             height: 24,
-            decoration: const BoxDecoration(color: Color(0xFF111827), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: AppColors.primaryBrownGold, shape: BoxShape.circle),
             child: Center(child: Text('$num', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold))),
           ),
           const SizedBox(width: 16),

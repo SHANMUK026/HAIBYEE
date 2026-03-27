@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 import '../home/home_screen.dart';
+import '../../theme/app_colors.dart';
+import '../../core/api_service.dart';
+import 'otp_verification_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,12 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Row(
                   children: [
                     Text(
-                      'SILVARA',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF1A1C1C),
+                      'SILVRA',
+                      style: GoogleFonts.manrope(
+                        color: AppColors.primaryBrownGold,
                         fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.90,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 2.0,
                       ),
                     ),
                   ],
@@ -114,13 +117,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       child: Text(
-                        'Forgot Password?',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF735C00),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      'Forgot password?',
+                      style: GoogleFonts.inter(
+                        color: AppColors.primaryBrownGold,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
+                    ),
                     ),
                   ),
                   
@@ -128,44 +131,78 @@ class _LoginScreenState extends State<LoginScreen> {
                   
                   // Login Button with Gradient
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HomeScreen()),
-                        (route) => false,
-                      );
+                    onTap: () async {
+                      String phoneOrEmail = _emailController.text.trim();
+                      if (phoneOrEmail.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please enter email or phone number')),
+                        );
+                        return;
+                      }
+
+                      // Check if it's a phone number (simple check)
+                      bool isPhone = RegExp(r'^\+?[0-9\s\-]{10,}$').hasMatch(phoneOrEmail);
+                      
+                      if (isPhone) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const Center(child: CircularProgressIndicator()),
+                        );
+
+                        try {
+                          String cleanPhone = phoneOrEmail.replaceAll(RegExp(r'[\+\s\-]'), '');
+                          if (cleanPhone.length == 10) cleanPhone = '91$cleanPhone';
+
+                          await ApiService().sendOtp(cleanPhone);
+                          
+                          if (mounted) {
+                            Navigator.pop(context); // Close loading
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OtpVerificationScreen(
+                                  phoneNumber: phoneOrEmail.startsWith('+') ? phoneOrEmail : '+91 $phoneOrEmail',
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          }
+                        }
+                      } else {
+                        // Email/Password login (not yet implemented in backend, but keeping fallback)
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const HomeScreen()),
+                          (route) => false,
+                        );
+                      }
                     },
                     child: Container(
-                      width: double.infinity,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment(0.21, -1.18),
-                          end: Alignment(0.79, 2.17),
-                          colors: [Color(0xFFD4AF37), Color(0xFFF7E37B)],
-                        ),
-                        borderRadius: BorderRadius.circular(9999),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFD4AF37).withOpacity(0.4),
-                            blurRadius: 30,
-                            offset: const Offset(0, 10),
-                            spreadRadius: -10,
-                          )
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Login',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF241A00),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                  width: double.infinity,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryBrownGold,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Login',
+                      style: GoogleFonts.manrope(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
+                ),
+    ),
                   
                   const SizedBox(height: 48),
                   
@@ -188,14 +225,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             MaterialPageRoute(builder: (context) => const RegisterScreen()),
                           );
                         },
-                        child: Text(
-                          'Sign Up',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF735C00),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                          child: Text(
+                            'Sign Up',
+                            style: GoogleFonts.inter(
+                              color: AppColors.primaryBrownGold,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
                       ),
                     ],
                   ),
@@ -245,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: GoogleFonts.inter(
-                color: const Color(0xFFD0C5AF),
+                color: AppColors.accentBrownGold.withOpacity(0.5),
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
               ),

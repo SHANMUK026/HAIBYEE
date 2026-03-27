@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -72,8 +73,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFD4AF37), Color(0xFFF7E37B)],
+                      gradient: LinearGradient(
+                        colors: [AppColors.primaryBrownGold, AppColors.accentBrownGold],
                       ),
                       border: Border.all(color: Colors.white, width: 4),
                       boxShadow: [
@@ -91,8 +92,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     bottom: 0,
                     child: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF111827),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBrownGold,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 16),
@@ -114,7 +115,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: ElevatedButton(
                 onPressed: _saveProfile,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF111827),
+                  backgroundColor: AppColors.primaryBrownGold,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   elevation: 0,

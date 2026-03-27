@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'theme/app_colors.dart';
 import 'features/onboarding/onboarding_screen.dart';
 
+import 'core/price_provider.dart';
+import 'package:provider/provider.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PriceProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,9 +26,8 @@ class MyApp extends StatelessWidget {
       title: 'HAIBYE App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryBrownGold),
         useMaterial3: true,
-        textTheme: GoogleFonts.interTextTheme(),
       ),
       home: const OnboardingScreen(),
     );

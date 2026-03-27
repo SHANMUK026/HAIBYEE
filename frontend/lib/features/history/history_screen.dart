@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../theme/app_colors.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -21,7 +22,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       'status': 'Minting',
       'date': 'TODAY',
       'icon': Icons.local_shipping_outlined,
-      'color': const Color(0xFFD4AF37),
+      'color': AppColors.primaryBrownGold,
       'tracking': ['Ordered', 'Minting', 'Dispatched', 'Delivered'],
       'currentStep': 1,
     },
@@ -150,7 +151,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 border: isSelected 
-                  ? const Border(bottom: BorderSide(color: Color(0xFFECC813), width: 3))
+                  ? Border(bottom: BorderSide(color: AppColors.primaryBrownGold, width: 3))
                   : null,
               ),
               child: Text(
@@ -158,7 +159,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? const Color(0xFFECC813) : const Color(0xFF64748B),
+                  color: isSelected ? AppColors.primaryBrownGold : const Color(0xFF64748B),
                 ),
               ),
             ),
@@ -398,8 +399,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     bool isGradient = false;
 
     if (status == 'Debited') {
-      bg = const Color(0x19D4AF37);
-      text = const Color(0xFFD4AF37);
+      bg = AppColors.primaryBrownGold.withOpacity(0.1);
+      text = AppColors.primaryBrownGold;
     } else if (status == 'Credited') {
       bg = Colors.transparent;
       text = const Color(0xFFFFFFFF);
@@ -442,12 +443,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFFEE9D), Color(0xFFEACC0C)],
+          colors: [Color(0xFFF5EDE3), Color(0xFFC8A27B)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFEACC0C).withOpacity(0.3),
+            color: const Color(0xFFC8A27B).withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 10),
           )

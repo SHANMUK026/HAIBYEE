@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../utils/price_data.dart';
 import 'summary_screen.dart';
+import '../../theme/app_colors.dart';
 
 class SavingsPlanScreen extends StatefulWidget {
   final bool isGoldInitial;
@@ -65,8 +66,8 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = isGold ? const Color(0xFFFFD709) : const Color(0xFF1F2937);
-    final accentColor = isGold ? const Color(0xFFB59310) : const Color(0xFF374151);
+    final themeColor = isGold ? AppColors.primaryBrownGold : const Color(0xFF1F2937);
+    final accentColor = isGold ? AppColors.primaryBrownGold : const Color(0xFF374151);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -96,7 +97,7 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
             Text(
               'ACCUMULATION STRATEGY',
               style: GoogleFonts.inter(
-                color: const Color(0xFFD4AF37),
+                color: AppColors.primaryBrownGold,
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.2,
@@ -244,7 +245,7 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
                 style: GoogleFonts.manrope(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: const Color(0xFFB59310),
+                  color: AppColors.primaryBrownGold,
                 ),
               ),
               const SizedBox(width: 8),
@@ -307,8 +308,8 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
               decoration: BoxDecoration(
                 color: selected ? Colors.white : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(16),
-                border: selected ? Border.all(color: const Color(0xFFFFD709), width: 2) : Border.all(color: Colors.transparent),
-                boxShadow: selected ? [BoxShadow(color: const Color(0xFFFFD709).withOpacity(0.2), blurRadius: 10)] : null,
+                border: selected ? Border.all(color: AppColors.primaryBrownGold, width: 2) : Border.all(color: Colors.transparent),
+                boxShadow: selected ? [BoxShadow(color: AppColors.primaryBrownGold.withOpacity(0.2), blurRadius: 10)] : null,
               ),
               child: Text(
                 '₹${amt.toInt()}',
@@ -339,7 +340,7 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFB59310).withOpacity(0.08),
+            color: AppColors.primaryBrownGold.withOpacity(0.08),
             blurRadius: 30,
             offset: const Offset(0, 15),
           )
@@ -386,10 +387,10 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFD709),
+              color: AppColors.primaryBrownGold,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Icon(Icons.lock_rounded, color: Color(0xFF1F2937), size: 28),
+            child: const Icon(Icons.lock_rounded, color: Colors.white, size: 28),
           ),
         ],
       ),
@@ -403,13 +404,13 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
-          colors: [const Color(0xFFFFD709), const Color(0xFFFACC15)],
+          colors: [AppColors.primaryBrownGold, AppColors.accentBrownGold],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFFD709).withOpacity(0.3),
+            color: AppColors.primaryBrownGold.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           )
@@ -437,7 +438,7 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
           style: GoogleFonts.manrope(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF1F2937),
+            color: Colors.white,
           ),
         ),
       ),
@@ -470,67 +471,5 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
       ],
     );
   }
-
-  Widget _buildBottomNav() {
-    return BottomAppBar(
-      height: 80,
-      color: Colors.white,
-      shape: const CircularNotchedRectangle(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(Icons.account_balance_wallet_outlined, 'PORTFOLIO', false),
-          _navItem(Icons.trending_up_rounded, 'INVEST', false),
-          _navItem(Icons.lock_rounded, 'VAULT', true),
-          _navItem(Icons.bar_chart_rounded, 'MARKET', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, bool isSelected) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (isSelected)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFE082),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, color: const Color(0xFF1F2937), size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFF1F2937),
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          Column(
-            children: [
-              Icon(icon, color: const Color(0xFF94A3B8), size: 24),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: GoogleFonts.inter(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w800,
-                  color: const Color(0xFF94A3B8),
-                ),
-              ),
-            ],
-          ),
-      ],
-    );
-  }
 }
+

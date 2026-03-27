@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 import 'kyc_screen.dart';
 import 'edit_profile_screen.dart';
 import 'addresses_screen.dart';
@@ -67,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               trailing: AppState().kycStatus == "Verified" 
                 ? const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 20)
                 : (AppState().kycStatus == "Pending" 
-                    ? const Icon(Icons.hourglass_empty_rounded, color: Color(0xFFD4AF37), size: 20)
+                    ? Icon(Icons.hourglass_empty_rounded, color: AppColors.primaryBrownGold, size: 20)
                     : const Icon(Icons.chevron_right_rounded, color: Color(0xFF94A3B8))),
             ),
             _buildMenuItem(Icons.location_on_outlined, 'Saved Addresses', 'Manage your delivery locations', () {
@@ -155,13 +156,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 72,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [Color(0xFFD4AF37), Color(0xFFF7E37B)],
+              gradient: LinearGradient(
+                colors: [AppColors.primaryBrownGold, AppColors.accentBrownGold],
               ),
               border: Border.all(color: Colors.white, width: 3),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD4AF37).withOpacity(0.2),
+                  color: AppColors.primaryBrownGold.withOpacity(0.2),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 )
@@ -188,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFEF3C7),
+                        color: const Color(0xFFF5EDE3),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -196,7 +197,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: GoogleFonts.inter(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
-                          color: const Color(0xFFB59310),
+                          color: AppColors.primaryBrownGold,
                         ),
                       ),
                     ),

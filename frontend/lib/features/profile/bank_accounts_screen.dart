@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 
 class BankAccountsScreen extends StatefulWidget {
   const BankAccountsScreen({super.key});
@@ -62,7 +63,7 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF111827),
+                backgroundColor: AppColors.primaryBrownGold,
                 minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
@@ -128,8 +129,8 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 60),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  side: const BorderSide(color: Color(0xFFE2E8F0)),
-                  foregroundColor: const Color(0xFF64748B),
+                  side: BorderSide(color: AppColors.primaryBrownGold.withOpacity(0.3)),
+                  foregroundColor: AppColors.primaryBrownGold,
                 ),
               ),
             );
@@ -141,13 +142,17 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               gradient: account.isPrimary 
-                  ? const LinearGradient(colors: [Color(0xFF1E293B), Color(0xFF0F172A)])
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppColors.primaryBrownGold, AppColors.secondaryBrownGold],
+                    )
                   : null,
               color: account.isPrimary ? null : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: account.isPrimary ? null : Border.all(color: const Color(0xFFE2E8F0)),
               boxShadow: account.isPrimary ? [
-                BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 8))
+                BoxShadow(color: AppColors.primaryBrownGold.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8))
               ] : null,
             ),
             child: Column(

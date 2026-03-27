@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 
 class AddressesScreen extends StatefulWidget {
   const AddressesScreen({super.key});
@@ -77,7 +78,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF111827),
+              backgroundColor: AppColors.primaryBrownGold,
               foregroundColor: Colors.white,
               minimumSize: const Size(double.infinity, 60),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -121,7 +122,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
           ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addNewAddress,
-        backgroundColor: const Color(0xFF111827),
+        backgroundColor: AppColors.primaryBrownGold,
         label: Text('Add New', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
         icon: const Icon(Icons.add),
       ),

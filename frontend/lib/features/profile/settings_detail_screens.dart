@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../utils/app_state.dart';
+import '../../theme/app_colors.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -130,7 +131,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
               Text('Active Devices', style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w800)),
               const SizedBox(height: 24),
               ...AppState().activeDevices.map((device) => ListTile(
-                leading: Icon(Icons.devices_rounded, color: device['status'] == 'Current Device' ? const Color(0xFFD4AF37) : const Color(0xFF64748B)),
+                leading: Icon(Icons.devices_rounded, color: device['status'] == 'Current Device' ? AppColors.primaryBrownGold : const Color(0xFF64748B)),
                 title: Text(device['name']!, style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
                 subtitle: Text('${device['location']} • ${device['status']}', style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8))),
                 trailing: device['status'] == 'Current Device' ? null : IconButton(
@@ -197,7 +198,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password changed successfully')));
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBrownGold),
             child: Text('Update', style: GoogleFonts.inter(color: Colors.white)),
           ),
         ],

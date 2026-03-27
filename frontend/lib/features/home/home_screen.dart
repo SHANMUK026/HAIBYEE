@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:frontend/utils/formatters.dart';
+import 'package:provider/provider.dart';
+import '../../core/price_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +23,8 @@ import '../profile/support_screen.dart';
 import '../../utils/price_data.dart';
 import '../../utils/extensions.dart';
 import '../../utils/app_state.dart';
+import '../../widgets/custom_bottom_navbar.dart';
+import '../../theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(color: Color(0xFFFFF7ED), shape: BoxShape.circle),
-              child: const Icon(Icons.verified_user_outlined, color: Color(0xFFD4AF37), size: 40),
+              decoration: const BoxDecoration(color: Color(0xFFF5EDE3), shape: BoxShape.circle),
+              child: Icon(Icons.verified_user_outlined, color: AppColors.primaryBrownGold, size: 40),
             ),
             const SizedBox(height: 24),
             Text(
@@ -103,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => KycScreen()));
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF111827),
+                  backgroundColor: AppColors.primaryBrownGold,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -127,14 +132,37 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _selectedIndex == 2 
-          ? const Color(0xFF221D10) 
-          : const Color(0xFFF8F9FA),
+      backgroundColor: Colors.white,
       body: _buildCurrentTabContent(),
-      floatingActionButton: _buildFloatingWalletButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: CustomBottomNavbar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index == -1) {
+            _showPortfolio();
+          } else {
+            setState(() => _selectedIndex = index);
+          }
+        },
+      ),
     );
+  }
+
+  void _showPortfolio() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PortfolioScreen(
+          goldBalance: goldBalance,
+          silverBalance: silverBalance,
+        ),
+      ),
+    );
+    
+    if (result is int && mounted) {
+      setState(() {
+        _selectedIndex = result;
+      });
+    }
   }
 
   Widget _buildCurrentTabContent() {
@@ -206,9 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: const Color(0xFF111827),
               ),
             ),
-            const SizedBox(height: 24),
-            _portfolioItem('24K Gold', '${AppState().goldGrams}g', '₹${(AppState().goldGrams * PriceData.goldPrice).toLocaleString()}', const Color(0xFFD4AF37)),
-            _portfolioItem('999 Silver', '${AppState().silverGrams}g', '₹${(AppState().silverGrams * PriceData.silverPrice).toLocaleString()}', const Color(0xFF94A3B8)),
+            const SizedBox(height: 24),            _portfolioItem('24K Gold', '${AppState().goldGrams}g', '₹${formatRupee(AppState().goldGrams * (Provider.of<PriceProvider>(context, listen: false).goldPrice))}', AppColors.primaryBrownGold),
+            _portfolioItem('999 Silver', '${AppState().silverGrams}g', '₹${formatRupee(AppState().silverGrams * (Provider.of<PriceProvider>(context, listen: false).silverPrice))}', Color(0xFF94A3B8)),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -256,6 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
+    final priceProvider = Provider.of<PriceProvider>(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
@@ -270,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFD4AF37), Color(0xFFF7E37B)],
+                  colors: [Color(0xFFC8A27B), Color(0xFFD2B494)],
                 ),
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
@@ -300,12 +328,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
-                  color: showGoldPrice ? const Color(0xFFFFD700).withOpacity(0.5) : const Color(0xFF94A3B8).withOpacity(0.5),
+                  color: showGoldPrice ? const Color(0xFFC8A27B).withOpacity(0.5) : const Color(0xFF94A3B8).withOpacity(0.5),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: (showGoldPrice ? const Color(0xFFFFD700) : const Color(0xFF94A3B8)).withOpacity(0.2),
+                    color: (showGoldPrice ? const Color(0xFFC8A27B) : const Color(0xFF94A3B8)).withOpacity(0.2),
                     blurRadius: 12,
                     spreadRadius: 1,
                     offset: const Offset(0, 4),
@@ -335,8 +363,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: Text(
                         showGoldPrice 
-                          ? '₹${PriceData.goldPrice.toLocaleString()}/gm' 
-                          : '₹${PriceData.silverPrice.toLocaleString()}/gm',
+                          ? '₹${formatRupee(priceProvider.goldPrice)}/gm' 
+                          : '₹${formatRupee(priceProvider.silverPrice)}/gm',
                         key: ValueKey<bool>(showGoldPrice),
                         style: GoogleFonts.manrope(
                           color: const Color(0xFF111827),
@@ -393,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 'Venu!',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFD4AF37),
+                  color: AppColors.primaryBrownGold,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),
@@ -426,11 +454,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBalanceCard() {
+    final priceProvider = Provider.of<PriceProvider>(context);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF6DD),
+        color: const Color(0xFFF5EDE3),
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
@@ -449,9 +478,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFDF4D9),
+                  color: const Color(0xFFF5EDE3),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.05)),
+                  border: Border.all(color: AppColors.primaryBrownGold.withOpacity(0.05)),
                 ),
                 child: Row(
                   children: [
@@ -463,7 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEF3C7),
+                  color: const Color(0xFFF5EDE3),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -489,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '₹${(isGoldSelected ? (AppState().goldGrams * PriceData.goldPrice) : (AppState().silverGrams * PriceData.silverPrice)).toLocaleString()}',
+              '₹${formatRupee(isGoldSelected ? (AppState().goldGrams * priceProvider.goldPrice) : (AppState().silverGrams * priceProvider.silverPrice))}',
               style: GoogleFonts.manrope(
                 color: const Color(0xFF111827), 
                 fontSize: 32, 
@@ -505,10 +534,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => _checkKycAndNavigate(WithdrawScreen(isGoldInitial: isGoldSelected)),
                   child: _buildButton(
                     'Withdraw', 
-                    const Color(0xFFFEF3C7).withOpacity(0.5), 
-                    const Color(0xFFD4AF37), 
+                    const Color(0xFFD2B494).withOpacity(0.5), 
+                    AppColors.primaryBrownGold, 
                     false,
-                    const Icon(Icons.remove_circle_outline, size: 16, color: Color(0xFFD4AF37)),
+                    const Icon(Icons.remove_circle_outline, size: 16, color: Color(0xFFC8A27B)),
                   ),
                 ),
               ),
@@ -518,7 +547,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => _checkKycAndNavigate(InvestScreen(isGold: isGoldSelected)),
                   child: _buildButton(
                     'Start Saving', 
-                    const Color(0xFFD4AF37), 
+                    AppColors.primaryBrownGold, 
                     Colors.white, 
                     true,
                     const Icon(Icons.add_circle_outline, size: 16, color: Colors.white),
@@ -539,7 +568,7 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFD4AF37) : Colors.transparent,
+          color: isSelected ? AppColors.primaryBrownGold : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
@@ -562,7 +591,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: isSolid ? [
           BoxShadow(
-            color: const Color(0xFFD4AF37).withOpacity(0.3),
+            color: AppColors.primaryBrownGold.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           )
@@ -658,7 +687,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFFE2E8F0),
+                              color: isSelected ? AppColors.primaryBrownGold : const Color(0xFFE2E8F0),
                               width: 1.5,
                             ),
                           ),
@@ -667,7 +696,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 e,
                                 style: GoogleFonts.inter(
-                                  color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF64748B),
+                                  color: isSelected ? AppColors.primaryBrownGold : const Color(0xFF64748B),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -677,8 +706,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Container(
                                   width: 4,
                                   height: 4,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFD4AF37),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryBrownGold,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
@@ -762,7 +791,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isGoldSelected 
-            ? [const Color(0xFFD4AF37), const Color(0xFFFCD34D)]
+            ? [AppColors.primaryBrownGold, AppColors.accentBrownGold]
             : [const Color(0xFF94A3B8), const Color(0xFF475569)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -770,7 +799,7 @@ class _HomeScreenState extends State<HomeScreen> {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: (isGoldSelected ? const Color(0xFFD4AF37) : const Color(0xFF94A3B8)).withOpacity(0.3), 
+            color: (isGoldSelected ? AppColors.primaryBrownGold : const Color(0xFF94A3B8)).withOpacity(0.3), 
             blurRadius: 8, 
             offset: const Offset(0, 4)
           )
@@ -803,7 +832,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   'View All',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFFD4AF37),
+                    color: AppColors.primaryBrownGold,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
@@ -820,8 +849,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildActionItem(
                   Icons.savings_rounded, 
                   'Buy Gold', 
-                  const Color(0xFFFFF7ED), 
-                  const Color(0xFFD4AF37),
+                  const Color(0xFFF5EDE3), 
+                  AppColors.primaryBrownGold,
                   () => Navigator.push(context, MaterialPageRoute(builder: (context) => InvestScreen(isGold: true))),
                 ),
                 _buildActionItem(
@@ -895,15 +924,15 @@ class _HomeScreenState extends State<HomeScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFFEE9D), Color(0xFFEACC0C)],
+          colors: [const Color(0xFFF5EDE3), AppColors.primaryBrownGold],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFEACC0C).withOpacity(0.3),
+            color: AppColors.primaryBrownGold.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           )
@@ -972,7 +1001,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              Text('${isGoldSelected ? 'Gold' : 'Silver'} ', style: GoogleFonts.manrope(color: isGoldSelected ? const Color(0xFFD4AF37) : const Color(0xFF94A3B8), fontSize: 22, fontWeight: FontWeight.w800)),
+              Text('${isGoldSelected ? 'Gold' : 'Silver'} ', style: GoogleFonts.manrope(color: isGoldSelected ? AppColors.primaryBrownGold : const Color(0xFF94A3B8), fontSize: 22, fontWeight: FontWeight.w800)),
               Text('Saving Plans', style: GoogleFonts.manrope(color: const Color(0xFF111827), fontSize: 22, fontWeight: FontWeight.w800)),
             ],
           ),
@@ -1065,7 +1094,7 @@ class _HomeScreenState extends State<HomeScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            const Color(0xFFD4AF37).withOpacity(0.08), 
+            AppColors.primaryBrownGold.withOpacity(0.08), 
             const Color(0xFFFAFAF9)
           ],
         ),
@@ -1081,7 +1110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 TextSpan(
                   text: 'Silvra',
-                  style: GoogleFonts.manrope(color: const Color(0xFFD4AF37), fontSize: 24, fontWeight: FontWeight.w800),
+                  style: GoogleFonts.manrope(color: AppColors.primaryBrownGold, fontSize: 24, fontWeight: FontWeight.w800),
                 ),
               ],
             ),
@@ -1107,15 +1136,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFD4AF37), Color(0xFFFCD34D)],
+                gradient: LinearGradient(
+                  colors: [AppColors.primaryBrownGold, AppColors.accentBrownGold],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFD4AF37).withOpacity(0.3), 
+                    color: AppColors.primaryBrownGold.withOpacity(0.3), 
                     blurRadius: 15, 
                     offset: const Offset(0, 6)
                   )
@@ -1289,10 +1318,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFFEF3C7), 
+                color: const Color(0xFFF5EDE3), 
                 shape: BoxShape.circle
               ),
-              child: const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFFD4AF37), size: 22),
+              child: Icon(Icons.chat_bubble_outline_rounded, color: AppColors.primaryBrownGold, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -1302,10 +1331,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     'Contact Support', 
                     style: GoogleFonts.inter(
-                      fontSize: 14, 
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF111827)
-                    )
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primaryBrownGold,
+                    ),
                   ),
                   Text(
                     "Need help? We're online", 
@@ -1321,14 +1350,14 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFFFEF3C7), 
+                color: const Color(0xFFF5EDE3), 
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.3)),
+                border: Border.all(color: AppColors.primaryBrownGold.withOpacity(0.3)),
               ),
               child: Text(
                 'LIVE CHAT', 
                 style: GoogleFonts.inter(
-                  color: const Color(0xFFD4AF37), 
+                  color: AppColors.primaryBrownGold, 
                   fontSize: 10, 
                   fontWeight: FontWeight.w800
                 )
@@ -1364,7 +1393,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.gpp_good_rounded, size: 18, color: Color(0xFFD4AF37)),
+                Icon(Icons.gpp_good_rounded, size: 18, color: AppColors.primaryBrownGold),
                 const SizedBox(width: 8),
                 Text(
                   '100% Secure & Trusted', 
@@ -1415,102 +1444,6 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ),
       ],
-    );
-  }
-
-  Widget _buildFloatingWalletButton() {
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          colors: [Color(0xFF111827), Color(0xFF1F2937)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          )
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PortfolioScreen(
-                  goldBalance: goldBalance,
-                  silverBalance: silverBalance,
-                ),
-              ),
-            );
-            
-            if (result is int && mounted) {
-              setState(() {
-                _selectedIndex = result;
-              });
-            }
-          },
-          customBorder: const CircleBorder(),
-          child: const Center(
-            child: Icon(Icons.account_balance_wallet_rounded, color: Color(0xFFD4AF37), size: 28),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return BottomAppBar(
-      height: 80,
-      color: Colors.white,
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      elevation: 30,
-      shadowColor: Colors.black.withOpacity(0.5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(Icons.home_rounded, 'Home', 0),
-          _navItem(Icons.trending_up_rounded, 'Market', 1),
-          const SizedBox(width: 48), // Space for notched FAB
-          _navItem(Icons.card_giftcard_rounded, 'Rewards', 2),
-          _navItem(Icons.history_rounded, 'History', 3),
-        ],
-      ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, int index) {
-    bool isSelected = _selectedIndex == index;
-    return InkWell(
-      onTap: () => setState(() => _selectedIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon, 
-            color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF94A3B8), 
-            size: 24
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF94A3B8),
-              fontSize: 10,
-              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
     );
   }
 

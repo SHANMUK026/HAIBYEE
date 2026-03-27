@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../invest/invest_screen.dart';
 import '../../widgets/price_chart.dart';
+import '../../theme/app_colors.dart';
 
 class PriceTrendsScreen extends StatefulWidget {
   final bool initialIsGold;
@@ -36,7 +37,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 12),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFFFFD464), Color(0xFFFFE59E)],
+                colors: [Color(0xFFF5EDE3), Color(0xFFD2B494)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -129,7 +130,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF2C5E5A) : Colors.transparent,
+            color: isSelected ? AppColors.primaryBrownGold : Colors.transparent,
             borderRadius: BorderRadius.circular(26),
           ),
           child: Center(
@@ -188,7 +189,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
       child: PriceChart(
         isGold: isGoldSelected,
         timeframe: selectedTimeframe,
-        lineColor: isGoldSelected ? const Color(0xFFF59E0B) : const Color(0xFF2C5E5A),
+        lineColor: isGoldSelected ? AppColors.primaryBrownGold : const Color(0xFF64748B),
       ),
     );
   }
@@ -208,7 +209,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
               color: isSelected ? const Color(0xFFF1F5F9) : Colors.white,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: isSelected ? const Color(0xFF2C5E5A) : const Color(0xFFE2E8F0),
+                color: isSelected ? AppColors.primaryBrownGold : const Color(0xFFE2E8F0),
                 width: 1.5,
               ),
             ),
@@ -217,7 +218,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: isSelected ? const Color(0xFF2C5E5A) : const Color(0xFF64748B),
+                color: isSelected ? AppColors.primaryBrownGold : const Color(0xFF64748B),
               ),
             ),
           ),
@@ -331,7 +332,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF2C5E5A),
+            color: AppColors.primaryBrownGold,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Center(
@@ -367,7 +368,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2C5E5A),
+                  color: AppColors.primaryBrownGold,
                 ),
               ),
             ],
@@ -512,14 +513,14 @@ class _SetAlertModalState extends State<SetAlertModal> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: isSelected ? const Color(0xFF2C5E5A) : const Color(0xFFE2E8F0), width: 1.5),
+                    border: Border.all(color: isSelected ? AppColors.primaryBrownGold : const Color(0xFFE2E8F0), width: 1.5),
                   ),
                   child: Text(
                     p,
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: isSelected ? const Color(0xFF2C5E5A) : const Color(0xFF64748B),
+                      color: isSelected ? AppColors.primaryBrownGold : const Color(0xFF64748B),
                     ),
                   ),
                 ),
@@ -562,7 +563,7 @@ class _SetAlertModalState extends State<SetAlertModal> {
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E3A3A),
+                backgroundColor: AppColors.primaryBrownGold,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

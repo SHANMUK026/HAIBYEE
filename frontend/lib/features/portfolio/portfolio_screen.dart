@@ -10,6 +10,8 @@ import '../profile/kyc_screen.dart';
 import '../../utils/app_state.dart';
 import '../../utils/price_data.dart';
 import '../../utils/extensions.dart';
+import '../../widgets/custom_bottom_navbar.dart';
+import '../../theme/app_colors.dart';
 
 class PortfolioScreen extends StatefulWidget {
   final double goldBalance;
@@ -46,8 +48,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(color: Color(0xFFFFF7ED), shape: BoxShape.circle),
-              child: const Icon(Icons.verified_user_outlined, color: Color(0xFFD4AF37), size: 40),
+              decoration: const BoxDecoration(color: Color(0xFFF5EDE3), shape: BoxShape.circle),
+              child: const Icon(Icons.verified_user_outlined, color: Color(0xFFC8A27B), size: 40),
             ),
             const SizedBox(height: 24),
             Text(
@@ -138,85 +140,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           ),
         ),
       ),
-      floatingActionButton: _buildFloatingWalletButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _buildBottomNav(),
-    );
-  }
-
-  Widget _buildFloatingWalletButton() {
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          colors: [Color(0xFF111827), Color(0xFF1F2937)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          )
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => Navigator.pop(context),
-          customBorder: const CircleBorder(),
-          child: const Center(
-            child: Icon(Icons.account_balance_wallet_rounded, color: Color(0xFFD4AF37), size: 28),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return BottomAppBar(
-      height: 80,
-      color: Colors.white,
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(Icons.home_outlined, 'Home', 0),
-          _navItem(Icons.trending_up_rounded, 'Market', 1),
-          const SizedBox(width: 48), // Space for notched FAB
-          _navItem(Icons.card_giftcard_rounded, 'Rewards', 2),
-          _navItem(Icons.history_rounded, 'History', 3),
-        ],
-      ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, int index) {
-    return InkWell(
-      onTap: () => Navigator.pop(context, index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: const Color(0xFF94A3B8),
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              color: const Color(0xFF94A3B8),
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+      bottomNavigationBar: CustomBottomNavbar(
+        selectedIndex: -1, // Currently central is selected
+        onItemTapped: (index) {
+          if (index != -1) {
+            Navigator.pop(context, index);
+          }
+        },
       ),
     );
   }
@@ -307,8 +237,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestScreen(isGold: true))),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD709),
-                    foregroundColor: const Color(0xFF453900),
+                    backgroundColor: AppColors.primaryBrownGold,
+                    foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -377,7 +307,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     size: const Size(220, 220),
                     painter: DonutChartPainter(
                       goldPercent: goldPercent,
-                      goldColor: const Color(0xFFFFD709),
+                      goldColor: AppColors.primaryBrownGold,
                       silverColor: const Color(0xFFE5E7EB),
                     ),
                   ),
@@ -411,7 +341,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendItem('Gold (${(goldPercent * 100).round()}%)', const Color(0xFFFFD709)),
+              _buildLegendItem('Gold (${(goldPercent * 100).round()}%)', AppColors.primaryBrownGold),
               const SizedBox(width: 24),
               _buildLegendItem('Silver (${((1 - goldPercent) * 100).round()}%)', const Color(0xFFE5E7EB)),
             ],
@@ -449,9 +379,9 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           child: _buildMetalSmallCard(
             'GOLD (${goldGm.toStringAsFixed(2)} GM)',
             formatter.format(goldValue),
-            '77%',
-            const Color(0xFFFFFBEB),
-            const Color(0xFFD4AF37),
+            '23%',
+            const Color(0xFFF5EDE3),
+            const Color(0xFFC8A27B),
             Icons.savings_rounded,
           ),
         ),
@@ -564,7 +494,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                           margin: const EdgeInsets.only(left: 6),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: isSelected ? const Color(0xFFFFD709) : Colors.transparent,
+                            color: isSelected ? AppColors.primaryBrownGold : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -589,7 +519,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             child: CustomPaint(
               size: Size.infinite,
               painter: SimpleLineChartPainter(
-                color: const Color(0xFFFFD709),
+                color: AppColors.primaryBrownGold,
                 period: selectedPeriod,
               ),
             ),
@@ -645,7 +575,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.lightbulb_outline_rounded, color: Color(0xFFD4AF37), size: 24),
+          Icon(Icons.lightbulb_outline_rounded, color: AppColors.primaryBrownGold, size: 24),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
@@ -676,7 +606,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        _buildActivityItem('Bought Gold', '12 Oct • 10:45 AM', '+ ₹2,500', '0.14 GM', Icons.shopping_bag_rounded, Colors.amber),
+        _buildActivityItem('Bought Gold', '12 Oct • 10:45 AM', '+ ₹2,500', '0.14 GM', Icons.shopping_bag_rounded, AppColors.primaryBrownGold),
         _buildActivityItem('Saved Weekly', '05 Oct • 02:20 AM', '+ ₹500', 'SYSTEMIC', Icons.auto_graph_rounded, Colors.blue),
         _buildActivityItem('Withdrawn', '28 Sep • 04:30 PM', '- ₹1,200', 'TO BANK', Icons.account_balance_rounded, Colors.red),
         const SizedBox(height: 24),
@@ -684,7 +614,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           child: Text(
             'VIEW ALL TRANSACTIONS',
             style: GoogleFonts.inter(
-              color: const Color(0xFFD4AF37),
+              color: AppColors.primaryBrownGold,
               fontSize: 12,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.5,
@@ -747,7 +677,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: const Color(0xFFFFD709), borderRadius: BorderRadius.circular(16)),
+                decoration: BoxDecoration(color: AppColors.primaryBrownGold, borderRadius: BorderRadius.circular(16)),
                 child: const Icon(Icons.lightbulb_rounded, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 16),
@@ -771,7 +701,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             child: Text(
               'View Detailed Report →',
               style: GoogleFonts.inter(
-                color: const Color(0xFFB59310),
+                color: AppColors.primaryBrownGold,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
@@ -786,7 +716,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: const Color(0xFFB59310), size: 20),
+        Icon(icon, color: AppColors.primaryBrownGold, size: 20),
         const SizedBox(width: 16),
         Expanded(
           child: Column(

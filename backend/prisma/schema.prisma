@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int           @id @default(autoincrement())
+  phone         String        @unique
+  name          String?
+  email         String?       @unique
+  kycStatus     String        @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, FAILED
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  transactions  Transaction[]
+  portfolio     Portfolio?
+  kycRecords    KycRecord[]
+  sips          Sip[]
+  referralCode  String?       @unique
+  referredBy    String?
+}
+
+model Otp {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   // BUY, SELL
+  assetType   String   // GOLD, SILVER
+  amount      Float    // Value in INR
+  grams       Float    // Weight in Grams
+  status      String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  referenceId String?  @unique // Razorpay Order ID or similar
+  createdAt   DateTime @default(now())
+}
+
+model Portfolio {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  user        User     @relation(fields: [userId], references: [id])
+  goldGrams   Float    @default(0)
+  silverGrams Float    @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+model KycRecord {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  idType       String   // AADHAAR, PAN
+  idNumber     String
+  status       String   @default("PENDING")
+  result       Json?
+  createdAt    DateTime @default(now())
+}
+
+model LivePrice {
+  id        Int      @id @default(autoincrement())
+  assetType String   // GOLD, SILVER
+  price     Float    // Price per gram
+  currency  String   @default("INR")
+  updatedAt DateTime @updatedAt
+}
+
+model Sip {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  assetType   String   // GOLD, SILVER
+  amount      Float    // Value in INR
+  frequency   String   // DAILY, WEEKLY, MONTHLY
+  status      String   @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
+  nextRunAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

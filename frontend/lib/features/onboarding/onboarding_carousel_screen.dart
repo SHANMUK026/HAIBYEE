@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../theme/app_colors.dart';
 import 'login_screen.dart';
 
 class OnboardingCarouselScreen extends StatefulWidget {
@@ -114,7 +115,7 @@ class _OnboardingCarouselScreenState extends State<OnboardingCarouselScreen> {
                   width: _currentPage == index ? 32 : 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: _currentPage == index ? const Color(0xFFFFD709) : const Color(0xFFDBDDDD),
+                    color: _currentPage == index ? AppColors.primaryBrownGold : const Color(0xFFDBDDDD),
                     borderRadius: BorderRadius.circular(9999),
                   ),
                 );
@@ -144,11 +145,11 @@ class _OnboardingCarouselScreenState extends State<OnboardingCarouselScreen> {
                   width: double.infinity,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFD709),
+                    color: AppColors.primaryBrownGold,
                     borderRadius: BorderRadius.circular(9999),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFFD709).withOpacity(0.4),
+                        color: AppColors.primaryBrownGold.withOpacity(0.4),
                         blurRadius: 15,
                         offset: const Offset(0, 10),
                       ),
@@ -158,7 +159,7 @@ class _OnboardingCarouselScreenState extends State<OnboardingCarouselScreen> {
                     child: Text(
                       _currentPage == _pages.length - 1 ? 'Start' : 'Next',
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF5B4B00),
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -195,8 +196,8 @@ class OnboardingSlide extends StatelessWidget {
                 child: Container(
                   width: 120,
                   height: 120,
-                  decoration: const BoxDecoration(
-                    color: Color(0x19FFD709),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryBrownGold.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -207,8 +208,8 @@ class OnboardingSlide extends StatelessWidget {
                 child: Container(
                   width: 250,
                   height: 250,
-                  decoration: const BoxDecoration(
-                    color: Color(0x19FFD709),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryBrownGold.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -245,7 +246,7 @@ class OnboardingSlide extends StatelessWidget {
                       TextSpan(text: data.titlePart1),
                       TextSpan(
                         text: data.titlePart2,
-                        style: const TextStyle(color: Color(0xFFECC813)),
+                        style: TextStyle(color: AppColors.primaryBrownGold),
                       ),
                     ],
                   ),

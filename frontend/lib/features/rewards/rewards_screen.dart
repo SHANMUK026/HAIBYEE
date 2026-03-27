@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../theme/app_colors.dart';
 
 class RewardsScreen extends StatefulWidget {
   final bool hideBackButton;
@@ -63,13 +64,13 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF221D10),
+        backgroundColor: const Color(0xFF1A1612),
         title: Text('Congratulations!', style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.w800)),
-        content: Text('You won 50 Aura Coins! 🎉', style: GoogleFonts.inter(color: const Color(0xFFECB613))),
+        content: Text('You won 50 Aura Coins! 🎉', style: GoogleFonts.inter(color: AppColors.primaryBrownGold)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('AWESOME', style: GoogleFonts.inter(color: const Color(0xFFECB613), fontWeight: FontWeight.bold)),
+            child: Text('AWESOME', style: GoogleFonts.inter(color: AppColors.primaryBrownGold, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -108,7 +109,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               style: IconButton.styleFrom(
-                backgroundColor: const Color(0xFF221D10),
+                backgroundColor: const Color(0xFF1E1C16),
                 shape: const CircleBorder(),
               ),
             )
@@ -127,16 +128,16 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
             decoration: BoxDecoration(
               color: const Color(0xFF1E1C16),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFECB613).withOpacity(0.3)),
+              border: Border.all(color: AppColors.primaryBrownGold.withOpacity(0.3)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.stars_rounded, color: Color(0xFFECB613), size: 16),
+                const Icon(Icons.stars_rounded, color: Color(0xFFC8A27B), size: 16),
                 const SizedBox(width: 6),
                 Text(
                   '1,250',
                   style: GoogleFonts.manrope(
-                    color: const Color(0xFFECB613),
+                    color: const Color(0xFFC8A27B),
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                   ),
@@ -158,9 +159,8 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFFFACC15),
-            Color(0xFFFEF08A),
-            Color(0xFFB45309),
+            Color(0xFFC8A27B),
+            Color(0xFFD2B494),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
@@ -243,7 +243,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2D240E),
-                      foregroundColor: const Color(0xFFECB613),
+                      foregroundColor: AppColors.primaryBrownGold,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -303,7 +303,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                               [ '10%', 'GOLD', '25', 'FREE', '10%', '100', '5%', '50'][i],
                               textAlign: TextAlign.center,
                               style: GoogleFonts.manrope(
-                                color: i % 2 == 0 ? const Color(0xFFECB613) : Colors.white,
+                                color: i % 2 == 0 ? AppColors.primaryBrownGold : Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -319,10 +319,10 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                       decoration: BoxDecoration(
                         color: const Color(0xFF1A1612),
                         shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFECB613), width: 8),
+                        border: Border.all(color: AppColors.primaryBrownGold, width: 8),
                       ),
-                      child: const Center(
-                        child: Icon(Icons.stars_rounded, color: Color(0xFFECB613), size: 24),
+                      child: Center(
+                        child: Icon(Icons.stars_rounded, color: AppColors.primaryBrownGold, size: 24),
                       ),
                     ),
                   ],
@@ -339,8 +339,8 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
               height: 36,
               transform: Matrix4.rotationZ(math.pi / 4),
               decoration: BoxDecoration(
-                color: const Color(0xFFECB613),
-                border: Border.all(color: const Color(0xFF221D10), width: 4),
+                color: AppColors.primaryBrownGold,
+                border: Border.all(color: const Color(0xFF1A1612), width: 4),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -376,16 +376,16 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                   ElevatedButton(
                     onPressed: _isSpinning ? null : _spin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFECB613),
-                      foregroundColor: const Color(0xFF221D10),
-                      disabledBackgroundColor: const Color(0xFFECB613).withOpacity(0.5),
+                      backgroundColor: AppColors.primaryBrownGold,
+                      foregroundColor: const Color(0xFF1A1612),
+                      disabledBackgroundColor: AppColors.primaryBrownGold.withOpacity(0.5),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       minimumSize: const Size(140, 60), // Wider, shorter for single line
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                       elevation: _isSpinning ? 0 : 15,
-                      shadowColor: const Color(0xFFECB613).withOpacity(0.4),
+                      shadowColor: AppColors.primaryBrownGold.withOpacity(0.4),
                     ),
                     child: Text(
                       _isSpinning ? 'SPINNING' : 'SPIN NOW',
@@ -434,7 +434,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                 child: Text(
                   'View All',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFFECB613),
+                    color: AppColors.primaryBrownGold,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -491,7 +491,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF221D10),
+        backgroundColor: const Color(0xFF1A1612),
         title: Text('Confirm Redemption', style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.w800)),
         content: Text('Would you like to redeem your points for $item?', style: GoogleFonts.inter(color: Colors.white70)),
         actions: [
@@ -506,8 +506,8 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                 SnackBar(content: Text('Successfully redeemed $item!')),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFECB613)),
-            child: Text('REDEEM', style: GoogleFonts.inter(color: const Color(0xFF221D10), fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBrownGold),
+            child: Text('REDEEM', style: GoogleFonts.inter(color: const Color(0xFF1A1612), fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -574,7 +574,7 @@ class _RewardItemCard extends StatelessWidget {
                     child: Text(
                       'EXCLUSIVE',
                       style: GoogleFonts.manrope(
-                        color: const Color(0xFFECB613),
+                        color: AppColors.primaryBrownGold,
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.5,
@@ -605,13 +605,13 @@ class _RewardItemCard extends StatelessWidget {
                     Text(
                       points,
                       style: GoogleFonts.manrope(
-                        color: const Color(0xFFECB613),
+                        color: AppColors.primaryBrownGold,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(width: 4),
-                    const Icon(Icons.stars_rounded, color: Color(0xFFECB613), size: 14),
+                    Icon(Icons.stars_rounded, color: AppColors.primaryBrownGold, size: 14),
                   ],
                 ),
                 const SizedBox(height: 2),
@@ -629,8 +629,8 @@ class _RewardItemCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onRedeem,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFECB613),
-                      foregroundColor: const Color(0xFF221D10),
+                      backgroundColor: AppColors.primaryBrownGold,
+                      foregroundColor: const Color(0xFF1A1612),
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -678,13 +678,13 @@ class _WheelPainter extends CustomPainter {
     // Outer gold ring
     final ringPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..color = const Color(0xFFECB613)
+      ..color = AppColors.primaryBrownGold
       ..strokeWidth = 12;
     canvas.drawCircle(center, radius - 6, ringPaint);
 
     // Subtle radial lines
     final linePaint = Paint()
-      ..color = const Color(0xFFECB613).withOpacity(0.3)
+      ..color = AppColors.primaryBrownGold.withOpacity(0.3)
       ..strokeWidth = 1;
     // Correct radial lines logic
     for (int i = 0; i < 8; i++) {

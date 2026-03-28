@@ -7,8 +7,7 @@ class ApiService {
   // Automatically switch between local and production
   static String get _baseUrl {
     if (kReleaseMode) {
-      // REPLACE THIS with your Render/Railway URL once deployed!
-      return 'https://silvra-backend.onrender.com/api/'; 
+      return 'https://haibyee-1.onrender.com/api/'; 
     }
     
     // Developer Local IP / Windows Localhost

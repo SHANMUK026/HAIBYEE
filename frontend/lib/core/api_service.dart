@@ -11,7 +11,7 @@ class ApiService {
     }
     
     // Developer Local IP / Windows Localhost
-    final ip = (!kIsWeb && Platform.isWindows) ? 'localhost' : '10.102.114.33';
+    final ip = (!kIsWeb && Platform.isWindows) ? 'localhost' : '10.102.114.64';
     return 'http://$ip:3000/api/';
   }
 

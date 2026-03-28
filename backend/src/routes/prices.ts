@@ -40,7 +40,7 @@ router.get('/live', async (req, res) => {
       });
     }
 
-    // Update in DB for caching
+    // Explicitly update fixed IDs to avoid record duplication
     await prisma.livePrice.upsert({
       where: { id: 1 },
       update: { price: goldPrice },

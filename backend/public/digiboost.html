@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <script src="https://cdn.jsdelivr.net/gh/surepassio/surepass-digiboost-web-sdk@latest/index.min.js"></script>
+    <title>DigiBoost Verification</title>
+    <style>
+        body { margin: 0; display: flex; align-items: center; justify-content: center; background: #f9fafb; font-family: sans-serif; height: 100vh; }
+        .container { width: 100%; max-width: 400px; padding: 24px; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .title { font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+        .desc { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+        #digilocker-sdk-button { min-height: 50px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="title">Secure Verification</div>
+    <p class="desc">Connect your DigiLocker to continue with Silvra</p>
+    <div id="digilocker-sdk-button"></div>
+</div>
+
+<script>
+    // Get token from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+        document.body.innerHTML = "<h1>Error: Missing initialization token</h1>";
+    } else {
+        window.DigiboostSdk({
+            gateway: "sandbox",
+            token: token,
+            selector: "#digilocker-sdk-button",
+            style: {
+                backgroundColor: "#2196F3",
+                color: "white",
+                padding: "16px 32px",
+                borderRadius: "12px",
+                fontSize: "16px",
+                fontWeight: "700",
+                boxShadow: "0 4px 12px rgba(33, 150, 243, 0.3)",
+                transition: "all 0.2s ease",
+                cursor: "pointer",
+                border: "none",
+                width: "100%"
+            },
+            onSuccess: (data) => {
+                console.log("SUCCESS", data);
+                if (window.FlutterChannel) {
+                    // Documentation: data contains client_id
+                    window.FlutterChannel.postMessage(JSON.stringify({ 
+                        status: 'success', 
+                        clientId: data.client_id || data.data?.client_id
+                    }));
+                }
+            },
+            onFailure: (error) => {
+                console.error("FAILURE", error);
+                if (window.FlutterChannel) {
+                    window.FlutterChannel.postMessage(JSON.stringify({ status: 'failure', error: error }));
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

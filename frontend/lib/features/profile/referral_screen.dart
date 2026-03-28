@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import '../../utils/app_state.dart';
+import '../../utils/extensions.dart';
 import '../../theme/app_colors.dart';
 
 class ReferralScreen extends StatelessWidget {
@@ -74,7 +76,7 @@ class ReferralScreen extends StatelessWidget {
   }
 
   Widget _buildReferralCodeCard(BuildContext context) {
-    const String code = "SILVRA777";
+    final String code = AppState().referralCode.isEmpty ? "SILVRA-${AppState().userId}" : AppState().referralCode;
     return Container(
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(24),
@@ -103,7 +105,7 @@ class ReferralScreen extends StatelessWidget {
                     Text(code, style: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w800, color: const Color(0xFF111827), letterSpacing: 2)),
                 IconButton(
                   onPressed: () {
-                    Clipboard.setData(const ClipboardData(text: code));
+                    Clipboard.setData(ClipboardData(text: code));
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Code copied to clipboard!')));
                   },
                   icon: Icon(Icons.copy_rounded, color: AppColors.primaryBrownGold),
@@ -135,9 +137,9 @@ class ReferralScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
-          _buildStatBox('Total Invited', '12', Icons.people_outline_rounded),
+          _buildStatBox('Total Invited', AppState().referralCount.toString(), Icons.people_outline_rounded),
           const SizedBox(width: 16),
-          _buildStatBox('Earned Gold', '₹1,200', Icons.stars_rounded),
+          _buildStatBox('Earned Gold', '₹${AppState().referralEarnings.toLocaleString()}', Icons.stars_rounded),
         ],
       ),
     );

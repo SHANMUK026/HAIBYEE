@@ -16,8 +16,8 @@ class DeliveryScreen extends StatefulWidget {
 class _DeliveryScreenState extends State<DeliveryScreen> {
   late bool isGold;
   final TextEditingController _gramsController = TextEditingController();
-  String _selectedAddress = AppState().addresses[0];
-  bool payWithVault = true;
+  String _selectedAddress = AppState().addresses.isEmpty ? "No address added" : AppState().addresses[0];
+  bool payWithVault = true; 
 
   @override
   void initState() {

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'otp_verification_screen.dart';
+import '../../core/api_service.dart';
 import '../../theme/app_colors.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -44,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             colorScheme: ColorScheme.light(
               primary: AppColors.primaryBrownGold,
               onPrimary: Colors.white,
-              onSurface: Color(0xFF1A1C1C),
+              onSurface: const Color(0xFF1A1C1C),
             ),
           ),
           child: child!,
@@ -147,7 +150,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // DOB (Added per user request)
+                      // DOB
                       _buildTextField(
                         label: 'DATE OF BIRTH',
                         hintText: 'DD/MM/YYYY',
@@ -193,34 +196,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 32),
                       
-                      // Create Account Button
-                      // _buildGradientButton(), // Removed as per user request
-                      
-                      const SizedBox(height: 32),
-                    
-                    // Register Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: ElevatedButton(
-                        onPressed: _handleRegister,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBrownGold,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                      // Register Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: _handleRegister,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBrownGold,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 0,
                           ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Register',
-                          style: GoogleFonts.manrope(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
+                          child: Text(
+                            'Register',
+                            style: GoogleFonts.manrope(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                     ],
                   ),
                 ),
@@ -358,6 +356,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
                 validator: (value) => value == null || value.length < 10 ? 'Enter valid number' : null,
                 style: GoogleFonts.inter(color: const Color(0xFF1A1C1C)),
                 decoration: InputDecoration(
@@ -383,51 +385,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildGradientButton() {
-    return GestureDetector(
-      onTap: () {
-        if (_formKey.currentState!.validate()) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OtpVerificationScreen(
-                phoneNumber: '+91 ${_phoneController.text}',
-                name: _nameController.text,
-                email: _emailController.text,
-              ),
-            ),
-          );
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: AppColors.primaryBrownGold,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryBrownGold.withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 10),
-              spreadRadius: -3,
-            )
-          ],
-        ),
-        child: Center(
-          child: Text(
-            'Create account',
-            style: GoogleFonts.inter(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildFooter() {
     return Column(
       children: [
@@ -437,7 +394,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             children: [
               Text(
-                '© 2024 The Digital Vault. Secure Institutional Grade\nEncryption.',
+                '© 2024 Silvra Vault. Secure Institutional Grade\nEncryption.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   color: const Color(0x7F1A1C1C),
@@ -471,18 +428,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _handleRegister() {
+  Future<void> _handleRegister() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OtpVerificationScreen(
-            phoneNumber: '+91 ${_phoneController.text}',
-            name: _nameController.text,
-            email: _emailController.text,
-          ),
-        ),
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
       );
+
+      try {
+        String phoneInput = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+        String cleanPhone = phoneInput.length >= 10 ? phoneInput.substring(phoneInput.length - 10) : phoneInput;
+
+        await ApiService().sendOtp(cleanPhone, intent: 'REGISTER');
+        
+        if (mounted) {
+          Navigator.pop(context); // Close loading
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpVerificationScreen(
+                phoneNumber: '+91 ${_phoneController.text}',
+                name: _nameController.text,
+                email: _emailController.text,
+                intent: 'REGISTER',
+                password: _passwordController.text,
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          Navigator.pop(context); // Close loading
+          String errorMsg = e.toString();
+          if (e is DioException && e.response?.data != null) {
+            errorMsg = e.response?.data['error'] ?? errorMsg;
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMsg)),
+          );
+        }
+      }
     }
   }
 }

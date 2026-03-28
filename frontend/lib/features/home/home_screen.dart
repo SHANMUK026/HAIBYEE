@@ -25,6 +25,7 @@ import '../../utils/extensions.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/custom_bottom_navbar.dart';
 import '../../theme/app_colors.dart';
+import '../../core/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,8 +37,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool isGoldSelected = true;
-  double goldBalance = 42850.20;
-  double silverBalance = 12450.75;
+  double get goldBalance => AppState().goldGrams;
+  double get silverBalance => AppState().silverGrams;
   String selectedAmount = '₹2,000';
   
   // Dynamic Price Pill Logic
@@ -48,6 +49,21 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _startPriceTimer();
+    _fetchInitialData();
+  }
+
+  Future<void> _fetchInitialData() async {
+    try {
+      final profileResponse = await ApiService().getUserProfile();
+      AppState().updateFromMap({'user': profileResponse.data});
+      
+      final txResponse = await ApiService().getTransactions();
+      AppState().updateTransactions(txResponse.data);
+      
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error fetching initial data: $e');
+    }
   }
 
   void _startPriceTimer() {
@@ -66,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _checkKycAndNavigate(Widget screen) {
+  Future<void> _checkKycAndNavigate(Widget screen) async {
     if (AppState().isKycVerified) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
     } else {
@@ -103,9 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => KycScreen()));
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => KycScreen()));
+                  _fetchInitialData(); // Refresh status after returning
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryBrownGold,
@@ -137,33 +154,13 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: CustomBottomNavbar(
         selectedIndex: _selectedIndex,
         onItemTapped: (index) {
-          if (index == -1) {
-            _showPortfolio();
-          } else {
-            setState(() => _selectedIndex = index);
-          }
+          setState(() => _selectedIndex = index);
         },
       ),
     );
   }
 
-  void _showPortfolio() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PortfolioScreen(
-          goldBalance: goldBalance,
-          silverBalance: silverBalance,
-        ),
-      ),
-    );
-    
-    if (result is int && mounted) {
-      setState(() {
-        _selectedIndex = result;
-      });
-    }
-  }
+  // Removed _showPortfolio separate push logic to favor tab-based layout
 
   Widget _buildCurrentTabContent() {
     switch (_selectedIndex) {
@@ -172,9 +169,11 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return const PriceTrendsScreen(hideBackButton: true);
       case 2:
-        return const RewardsScreen(hideBackButton: true);
+        return PortfolioScreen(goldBalance: goldBalance, silverBalance: silverBalance);
       case 3:
-        return const HistoryScreen();
+        return const RewardsScreen(hideBackButton: true);
+      case 4:
+        return const ProfileScreen();
       default:
         return _buildHomeContent();
     }
@@ -316,10 +315,9 @@ class _HomeScreenState extends State<HomeScreen> {
           // Dynamic Highlighted Animated Pill
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PriceTrendsScreen(initialIsGold: showGoldPrice)),
-              );
+              setState(() {
+                _selectedIndex = 1; // Direct jump to Market Tab
+              });
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 500),
@@ -419,13 +417,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Text(
-                'Venu!',
+                AppState().userName.isNotEmpty ? '${AppState().userName}!' : 'User!',
                 style: GoogleFonts.inter(
                   color: AppColors.primaryBrownGold,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),
               ),
+              if (AppState().isKycVerified) ...[
+                const SizedBox(width: 4),
+                const Icon(Icons.verified, color: Colors.green, size: 14),
+              ],
               Text(' 👋', style: GoogleFonts.inter(fontSize: 14)),
             ],
           ),
@@ -959,7 +961,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                '₹12,450.00',
+                NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2).format(AppState().totalSavingsThisMonth),
                 style: GoogleFonts.manrope(
                   color: Colors.black,
                   fontSize: 28,
@@ -969,12 +971,16 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.trending_up_rounded, color: Color(0xFF16A34A), size: 14),
+                   Icon(
+                    AppState().savingsPercentageChange >= 0 ? Icons.trending_up_rounded : Icons.trending_down_rounded, 
+                    color: AppState().savingsPercentageChange >= 0 ? const Color(0xFF16A34A) : Colors.redAccent, 
+                    size: 14
+                  ),
                   const SizedBox(width: 4),
                   Text(
-                    '+12% from last month',
+                    '${AppState().savingsPercentageChange >= 0 ? '+' : ''}${AppState().savingsPercentageChange.toStringAsFixed(0)}% from last month',
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF16A34A),
+                      color: AppState().savingsPercentageChange >= 0 ? const Color(0xFF16A34A) : Colors.redAccent,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
@@ -1224,7 +1230,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: const Color(0xFFF3F4F6),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
               image: const DecorationImage(
-                image: NetworkImage('https://images.unsplash.com/photo-1610333592204-50d4eb0f782c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'),
+                image: NetworkImage('https://images.unsplash.com/photo-1618409019667-c107590aa511?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'),
                 fit: BoxFit.cover,
               ),
             ),

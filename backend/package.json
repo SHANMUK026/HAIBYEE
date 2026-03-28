@@ -5,14 +5,15 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "prisma db push --skip-generate && node dist/index.js",
-    "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc && npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "6.2.1",
     "@prisma/config": "^7.5.0",
     "axios": "^1.13.6",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
@@ -21,6 +22,7 @@
     "razorpay": "^2.9.6"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
@@ -28,6 +30,7 @@
     "nodemon": "^3.1.14",
     "prisma": "6.2.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   }
 }

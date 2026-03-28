@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import '../home/home_screen.dart';
+import 'package:dio/dio.dart';
 import '../../core/api_service.dart';
+import '../../utils/app_state.dart';
 import '../../theme/app_colors.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phoneNumber;
   final String? name;
   final String? email;
+  final String? intent;
+  final String? password;
   const OtpVerificationScreen({
     super.key,
     required this.phoneNumber,
     this.name,
     this.email,
+    this.intent,
+    this.password,
   });
 
   @override
@@ -30,21 +36,23 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     super.initState();
     _startTimer();
-    _sendOtp();
+    // _sendOtp() removed from here; source screens now trigger it before navigation.
   }
 
   Future<void> _sendOtp() async {
     try {
-      // Clean phone number: remove '+', spaces, and dashes
-      String cleanPhone = widget.phoneNumber.replaceAll(RegExp(r'[\+\s\-]'), '');
-      // If starts with 91, keep it. If length 10, add 91.
-      if (cleanPhone.length == 10) {
-        cleanPhone = '91$cleanPhone';
-      }
-      await ApiService().sendOtp(cleanPhone);
+      // Normalize to 10 digits for backend consistency
+      String cleanPhone = widget.phoneNumber.replaceAll(RegExp(r'\D'), '');
+      if (cleanPhone.length >= 10) cleanPhone = cleanPhone.substring(cleanPhone.length - 10);
+      
+      await ApiService().sendOtp(cleanPhone, intent: widget.intent);
     } catch (e) {
+      String errorMsg = e.toString();
+      if (e is DioException && e.response?.data != null) {
+        errorMsg = e.response?.data['error'] ?? errorMsg;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send OTP: $e')),
+        SnackBar(content: Text(errorMsg)),
       );
     }
   }
@@ -210,6 +218,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         const SizedBox(height: 16),
                         GestureDetector(
                           onTap: _secondsRemaining == 0 ? () {
+                            _sendOtp(); // Actually trigger the API call
                             setState(() {
                               _secondsRemaining = 45;
                               _startTimer();
@@ -351,13 +360,28 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     );
 
     try {
-      // Clean phone number: remove '+', spaces, and dashes
-      String cleanPhone = widget.phoneNumber.replaceAll(RegExp(r'[\+\s\-]'), '');
-      if (cleanPhone.length == 10) cleanPhone = '91$cleanPhone';
+      // Normalize to 10 digits for backend consistency
+      String cleanPhone = widget.phoneNumber.replaceAll(RegExp(r'\D'), '');
+      if (cleanPhone.length >= 10) cleanPhone = cleanPhone.substring(cleanPhone.length - 10);
 
-      await ApiService().verifyOtp(cleanPhone, otp);
+      final response = await ApiService().verifyOtp(
+        cleanPhone, 
+        otp, 
+        name: widget.name, 
+        email: widget.email,
+        intent: widget.intent,
+        password: widget.password,
+      );
       
       if (mounted) {
+        final responseData = response.data;
+        if (responseData['token'] != null) {
+          ApiService().setToken(responseData['token']);
+        }
+        
+        // Update global app state with user details
+        AppState().updateFromMap(responseData);
+
         Navigator.pop(context); // Close loading
         Navigator.pushAndRemoveUntil(
           context,
@@ -368,8 +392,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     } catch (e) {
       if (mounted) {
         Navigator.pop(context); // Close loading
+        String errorMsg = e.toString();
+        if (e is DioException && e.response?.data != null) {
+          errorMsg = e.response?.data['error'] ?? errorMsg;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Verification failed: $e')),
+          SnackBar(content: Text(errorMsg)),
         );
       }
     }

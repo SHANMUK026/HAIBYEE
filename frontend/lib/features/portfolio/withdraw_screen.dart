@@ -212,11 +212,20 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             // Withdraw Button
             GestureDetector(
               onTap: () {
-                if (_amountController.text.isNotEmpty && _bankAccountController.text.isNotEmpty) {
+                final amount = double.tryParse(_amountController.text) ?? 0;
+                if (amount <= 0) {
+                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a valid amount')));
+                   return;
+                }
+                if (amount > currentBalance) {
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Insufficient ${isGold ? 'Gold' : 'Silver'} balance')));
+                   return;
+                }
+                if (_bankAccountController.text.isNotEmpty) {
                   _showSuccessDialog();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill in all details')),
+                    const SnackBar(content: Text('Please fill in bank details')),
                   );
                 }
               },

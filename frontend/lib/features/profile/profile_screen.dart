@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_state.dart';
 import '../../theme/app_colors.dart';
+import '../../core/api_service.dart';
 import 'kyc_screen.dart';
 import 'edit_profile_screen.dart';
 import 'addresses_screen.dart';
@@ -302,8 +303,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           TextButton(
             onPressed: () {
-              // Mock Logout - Reset some state
-              AppState().kycStatus = "Unverified";
+              // Full Logout - Clear all state
+              AppState().clear();
+              ApiService().clearToken();
               Navigator.pushAndRemoveUntil(
                 context, 
                 MaterialPageRoute(builder: (context) => const OnboardingScreen()), 

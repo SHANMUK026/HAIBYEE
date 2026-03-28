@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/app_state.dart';
+import '../../core/api_service.dart';
 
 class RewardsScreen extends StatefulWidget {
   final bool hideBackButton;
@@ -16,6 +19,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
   late Animation<double> _animation;
   double _rotation = 0.0;
   bool _isSpinning = false;
+  int _wonPoints = 0;
 
   @override
   void initState() {
@@ -36,7 +40,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
       });
     });
 
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
         setState(() {
           _isSpinning = false;
@@ -52,12 +56,55 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
     super.dispose();
   }
 
-  void _spin() {
+  Future<void> _spin() async {
     if (_isSpinning) return;
+    
     setState(() {
       _isSpinning = true;
     });
-    _controller.forward(from: 0.0);
+
+    try {
+      // 1. Fetch backend reward first
+      final response = await ApiService().dio.post('profile/rewards/spin');
+      final result = response.data;
+      _wonPoints = result['wonPoints'] ?? 0;
+      
+      // 2. Map points to segment index
+      // Wheel labels: [ '10%', 'GOLD', '25', 'FREE', '10%', '100', '5%', '50']
+      // Indices:        0      1       2      3       4       5      6     7
+      int targetIndex = 2; // Default to 25
+      if (_wonPoints == 50) targetIndex = 7;
+      if (_wonPoints == 100) targetIndex = 5;
+      if (_wonPoints == 25) targetIndex = 2;
+
+      // 3. Calculate target rotation
+      // Pointer is at the TOP (North / -90 degrees / -pi/2)
+      double segmentAngle = (2 * math.pi / 8); // 8 segments
+      double pointerAngle = - (math.pi / 2); // North
+      
+      // Calculate how much we need to rotate to bring targetIndex to the top
+      // We subtract (targetIndex * segmentAngle) to rotate the wheel backwards
+      // We subtract (segmentAngle / 2) to center the segment under the pointer
+      double targetAngle = pointerAngle - (targetIndex * segmentAngle) - (segmentAngle / 2);
+      
+      // Add multiple full rotations (5 full spins)
+      double totalRotation = (10 * math.pi) + targetAngle;
+
+      // 4. Start animation to THAT specific value
+      _animation = Tween<double>(begin: _rotation % (2 * math.pi), end: totalRotation).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.linearToEaseOut)
+      );
+
+      _controller.forward(from: 0.0);
+    } catch (e) {
+      debugPrint('Spin Error: $e');
+      setState(() {
+        _isSpinning = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to start spin. Please try again.')),
+      );
+    }
   }
 
   void _showWinDialog() {
@@ -65,8 +112,18 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1612),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text('Congratulations!', style: GoogleFonts.manrope(color: Colors.white, fontWeight: FontWeight.w800)),
-        content: Text('You won 50 Aura Coins! 🎉', style: GoogleFonts.inter(color: AppColors.primaryBrownGold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.stars_rounded, color: Color(0xFFC8A27B), size: 64),
+            const SizedBox(height: 16),
+            Text('You won $_wonPoints Aura Coins! 🎉', 
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -135,7 +192,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                 const Icon(Icons.stars_rounded, color: Color(0xFFC8A27B), size: 16),
                 const SizedBox(width: 6),
                 Text(
-                  '1,250',
+                  AppState().auraPoints.toString(),
                   style: GoogleFonts.manrope(
                     color: const Color(0xFFC8A27B),
                     fontSize: 14,
@@ -203,7 +260,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
-                    '1,250',
+                    AppState().auraPoints.toString(),
                     style: GoogleFonts.manrope(
                       color: const Color(0xFF451A03),
                       fontSize: 48,
@@ -227,7 +284,7 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
                 children: [
                   Expanded(
                     child: Text(
-                      'Tier: Gold Member',
+                      'Tier: ${AppState().auraPoints >= 1000 ? 'Gold' : 'Silver'} Member',
                       style: GoogleFonts.inter(
                         color: const Color(0xFF451A03).withOpacity(0.7),
                         fontSize: 14,
@@ -457,28 +514,28 @@ class _RewardsScreenState extends State<RewardsScreen> with SingleTickerProvider
               points: '5,000',
               retailPrice: 'Retail: ₹8,200',
               isExclusive: true,
-              imageUrl: 'https://images.unsplash.com/photo-1589118949245-7d48d5045451?w=400&q=80',
+              imageUrl: 'C:/Users/user/.gemini/antigravity/brain/20e98837-fa08-4495-a211-5f9afe70b64f/gold_coin_reward_1774645258242.png',
               onRedeem: () => _showRedeemDialog('1g 24K Gold Coin'),
             ),
             _RewardItemCard(
               title: '10g Silver Bar',
               points: '2,500',
               retailPrice: 'Retail: ₹1,500',
-              imageUrl: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?w=400&q=80',
+              imageUrl: 'C:/Users/user/.gemini/antigravity/brain/20e98837-fa08-4495-a211-5f9afe70b64f/silver_bar_reward_1774645279405.png',
               onRedeem: () => _showRedeemDialog('10g Silver Bar'),
             ),
             _RewardItemCard(
               title: 'Pro Membership',
               points: '1,000',
               retailPrice: 'Retail: ₹2,400',
-              imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&q=80',
+              imageUrl: 'C:/Users/user/.gemini/antigravity/brain/20e98837-fa08-4495-a211-5f9afe70b64f/pro_membership_badge_1774645309947.png',
               onRedeem: () => _showRedeemDialog('Pro Membership'),
             ),
             _RewardItemCard(
               title: '20% Buy Discount',
               points: '800',
               retailPrice: 'One-time use',
-              imageUrl: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&q=80',
+              imageUrl: 'C:/Users/user/.gemini/antigravity/brain/20e98837-fa08-4495-a211-5f9afe70b64f/discount_coupon_reward_1774645331757.png',
               onRedeem: () => _showRedeemDialog('20% Buy Discount'),
             ),
           ],
@@ -555,10 +612,9 @@ class _RewardItemCard extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                  ),
+                  child: imageUrl.startsWith('http') 
+                    ? Image.network(imageUrl, fit: BoxFit.cover)
+                    : Image.file(File(imageUrl), fit: BoxFit.cover),
                 ),
               ),
               if (isExclusive)

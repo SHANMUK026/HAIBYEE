@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_state.dart';
 import '../../theme/app_colors.dart';
+import '../../core/api_service.dart';
+import 'package:dio/dio.dart';
+import 'digilocker_webview.dart';
 import 'mock_identification_screens.dart';
 
 class KycScreen extends StatefulWidget {
@@ -12,6 +15,10 @@ class KycScreen extends StatefulWidget {
 }
 
 class _KycScreenState extends State<KycScreen> {
+  final TextEditingController _aadhaarController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
+  String? _clientId;
+  bool _isOtpStep = false;
   bool isDigiLockerStep = true;
   bool isVerifying = false;
   // Removed ImagePicker for OTP-only test
@@ -20,6 +27,13 @@ class _KycScreenState extends State<KycScreen> {
     'Aadhaar Card (Back)': false,
     'PAN Card': false,
   };
+
+  @override
+  void dispose() {
+    _aadhaarController.dispose();
+    _otpController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +56,11 @@ class _KycScreenState extends State<KycScreen> {
         ),
         centerTitle: true,
       ),
-      body: isVerifying ? _buildVerifyingState() : (isDigiLockerStep ? _buildDigiLockerStep() : _buildManualStep()),
+      body: isVerifying 
+        ? _buildVerifyingState() 
+        : (_isOtpStep 
+            ? _buildOtpVerifyStep() 
+            : (isDigiLockerStep ? _buildDigiLockerStep() : _buildManualStep())),
     );
   }
 
@@ -128,7 +146,7 @@ class _KycScreenState extends State<KycScreen> {
           ),
           const SizedBox(height: 40),
           Text(
-            'Connect DigiLocker',
+            'Connect Aadhaar',
             style: GoogleFonts.manrope(
               fontSize: 24,
               fontWeight: FontWeight.w800,
@@ -137,12 +155,33 @@ class _KycScreenState extends State<KycScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Silvra uses Surepass to securely fetch your Aadhaar & PAN details directly from DigiLocker for instant verification.',
+            'Silvra uses Surepass to securely verify your Aadhaar details via OTP for instant identity verification.',
             style: GoogleFonts.inter(fontSize: 15, color: const Color(0xFF64748B), height: 1.5),
           ),
+          const SizedBox(height: 32),
+          
+          // Aadhaar Number Input
+          TextFormField(
+            controller: _aadhaarController,
+            keyboardType: TextInputType.number,
+            maxLength: 12,
+            decoration: InputDecoration(
+              labelText: '12-Digit Aadhaar Number',
+              hintText: 'XXXX XXXX XXXX',
+              counterText: '',
+              prefixIcon: const Icon(Icons.badge_outlined),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          
           const Spacer(),
           ElevatedButton(
-            onPressed: _startVerification,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DigiLockerWebView()),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBrownGold,
               foregroundColor: Colors.white,
@@ -202,7 +241,7 @@ class _KycScreenState extends State<KycScreen> {
           _buildUploadCard('PAN Card', Icons.credit_card_outlined),
           const SizedBox(height: 48),
           ElevatedButton(
-            onPressed: uploadedDocs.values.every((v) => v) ? _startVerification : null,
+            onPressed: uploadedDocs.values.every((v) => v) ? _initiateAadhaarOtp : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBrownGold,
               foregroundColor: Colors.white,
@@ -283,14 +322,121 @@ class _KycScreenState extends State<KycScreen> {
     );
   }
 
-  void _startVerification() {
+  Widget _buildOtpVerifyStep() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Verify OTP',
+            style: GoogleFonts.manrope(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF111827),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Enter the 6-digit verification code sent to your Aadhaar-linked mobile number.',
+            style: GoogleFonts.inter(fontSize: 15, color: const Color(0xFF64748B), height: 1.5),
+          ),
+          const SizedBox(height: 32),
+          TextFormField(
+            controller: _otpController,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, letterSpacing: 8),
+            decoration: InputDecoration(
+              counterText: '',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          const Spacer(),
+          ElevatedButton(
+            onPressed: isVerifying ? null : _verifyAadhaarOtp,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBrownGold,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 60),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+            child: Text(
+              isVerifying ? 'Verifying...' : 'Complete Verification',
+              style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: TextButton(
+              onPressed: () => setState(() => _isOtpStep = false),
+              child: Text('Change Aadhaar Number', style: GoogleFonts.inter(color: Colors.blue)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _initiateAadhaarOtp() async {
+    if (_aadhaarController.text.length < 12) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter a valid 12-digit Aadhaar number')));
+      return;
+    }
+
     setState(() => isVerifying = true);
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        AppState().kycStatus = "Pending";
-        _showSuccessDialog();
+    try {
+      final response = await ApiService().post('/kyc/aadhaar-otp', {
+        'id_number': _aadhaarController.text
+      });
+      
+      if (response.data['success']) {
+        setState(() {
+          _clientId = response.data['data']['client_id'];
+          _isOtpStep = true;
+          isVerifying = false;
+        });
+      } else {
+        throw response.data['message'] ?? 'Failed to send OTP';
       }
-    });
+    } catch (e) {
+      setState(() => isVerifying = false);
+      String errorMsg = e.toString();
+      if (e is DioException && e.response?.data != null) {
+        errorMsg = e.response?.data['error'] ?? errorMsg;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+    }
+  }
+
+  Future<void> _verifyAadhaarOtp() async {
+    if (_otpController.text.length < 6) return;
+
+    setState(() => isVerifying = true);
+    try {
+      final response = await ApiService().post('/kyc/aadhaar-verify', {
+        'client_id': _clientId,
+        'otp': _otpController.text,
+        'userId': AppState().userId
+      });
+
+      if (response.data['success']) {
+        AppState().kycStatus = "Verified";
+        _showSuccessDialog();
+      } else {
+        throw response.data['message'] ?? 'Verification failed';
+      }
+    } catch (e) {
+      setState(() => isVerifying = false);
+      String errorMsg = e.toString();
+      if (e is DioException && e.response?.data != null) {
+        errorMsg = e.response?.data['error'] ?? errorMsg;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+    } finally {
+      setState(() => isVerifying = false);
+    }
   }
 
   void _showUploadOptions(String label) {

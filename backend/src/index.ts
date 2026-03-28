@@ -15,6 +15,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({ origin: '*' }));
+app.use(express.static('public'));
 app.use(express.json());
 
 // Routes
@@ -29,6 +30,6 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(Number(port), '0.0.0.0', () => {
+  console.log(`Server is running on port ${port} and listening on all interfaces`);
 });

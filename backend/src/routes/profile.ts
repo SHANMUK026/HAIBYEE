@@ -109,4 +109,33 @@ router.post('/withdraw', authenticateToken, async (req: any, res) => {
   }
 });
 
+// Award points for daily spin (Server-side authoritative)
+router.post('/rewards/spin', authenticateToken, async (req: any, res) => {
+  const userId = req.user.userId;
+
+  try {
+    // These options must match the wheel segments in the frontend
+    // [ '10%', 'GOLD', '25', 'FREE', '10%', '100', '5%', '50']
+    // We only award Aura points here (25, 50, 100). 
+    // Others are placeholders or handled differently (coupons etc)
+    const options = [25, 50, 100, 25, 50, 25]; 
+    const wonPoints = options[Math.floor(Math.random() * options.length)];
+
+    const user: any = await (prisma.user as any).update({
+      where: { id: userId },
+      data: {
+        auraPoints: { increment: wonPoints }
+      }
+    });
+    
+    res.json({ 
+      message: 'Points awarded', 
+      wonPoints,
+      auraPoints: user.auraPoints 
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to award points' });
+  }
+});
+
 export default router;

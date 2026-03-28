@@ -43,6 +43,7 @@ dependencies:
   path_provider_windows: 2.3.0
   local_auth: ^2.3.0
   shared_preferences: ^2.5.2
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:

@@ -34,9 +34,9 @@ class CustomBottomNavbar extends StatelessWidget {
             children: [
               _buildNavItem(0, Icons.home_rounded, 'Home'),
               _buildNavItem(1, Icons.trending_up_rounded, 'Market'),
-              _buildCentralItem(),
-              _buildNavItem(2, Icons.emoji_events_outlined, 'Rewards'),
-              _buildNavItem(3, Icons.history_rounded, 'History'),
+              _buildCentralItem(2),
+              _buildNavItem(3, Icons.emoji_events_outlined, 'Rewards'),
+              _buildNavItem(4, Icons.person_rounded, 'Profile'),
             ],
           ),
         ),
@@ -75,16 +75,17 @@ class CustomBottomNavbar extends StatelessWidget {
     );
   }
 
-  Widget _buildCentralItem() {
+  Widget _buildCentralItem(int index) {
+    bool isSelected = selectedIndex == index;
     return Expanded(
       child: InkWell(
-        onTap: () => onItemTapped(-1), // Special index for central button
+        onTap: () => onItemTapped(index),
         child: Center(
           child: Container(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.primaryBrownGold,
+              color: isSelected ? AppColors.accentBrownGold : AppColors.primaryBrownGold,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(

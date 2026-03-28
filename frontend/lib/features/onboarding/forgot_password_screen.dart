@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 import 'otp_verification_screen.dart';
+import '../../core/api_service.dart';
 import '../../theme/app_colors.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -87,16 +89,44 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             
             // Send OTP Button
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (_phoneController.text.length == 10) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OtpVerificationScreen(
-                        phoneNumber: '+91 ${_phoneController.text}',
-                      ),
-                    ),
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => const Center(child: CircularProgressIndicator()),
                   );
+
+                  try {
+                    String phoneInput = _phoneController.text.replaceAll(RegExp(r'[\+\s\-]'), '');
+                    String cleanPhone = phoneInput.length == 10 ? '91$phoneInput' : phoneInput;
+
+                    await ApiService().sendOtp(cleanPhone, intent: 'FORGOT_PASSWORD');
+                    
+                    if (mounted) {
+                      Navigator.pop(context); // Close loading
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OtpVerificationScreen(
+                            phoneNumber: '+91 ${_phoneController.text}',
+                            intent: 'FORGOT_PASSWORD',
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      Navigator.pop(context); // Close loading
+                      String errorMsg = e.toString();
+                      if (e is DioException && e.response?.data != null) {
+                        errorMsg = e.response?.data['error'] ?? errorMsg;
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(errorMsg)),
+                      );
+                    }
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Please enter a valid 10-digit phone number')),

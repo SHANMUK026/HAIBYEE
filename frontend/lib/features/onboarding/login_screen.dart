@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
+import 'login_with_otp_screen.dart';
 import '../home/home_screen.dart';
 import '../../theme/app_colors.dart';
 import '../../core/api_service.dart';
+import '../../utils/app_state.dart';
 import 'otp_verification_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -92,6 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     label: 'EMAIL ADDRESS/ PHONE NUMBER',
                     hintText: 'name@example.com',
                     controller: _emailController,
+                    formatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9@.]')),
+                    ],
                   ),
                   
                   const SizedBox(height: 24),
@@ -133,76 +140,113 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () async {
                       String phoneOrEmail = _emailController.text.trim();
-                      if (phoneOrEmail.isEmpty) {
+                      String password = _passwordController.text.trim();
+
+                      if (phoneOrEmail.isEmpty || password.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter email or phone number')),
+                          const SnackBar(content: Text('Please enter credentials')),
                         );
                         return;
                       }
 
-                      // Check if it's a phone number (simple check)
-                      bool isPhone = RegExp(r'^\+?[0-9\s\-]{10,}$').hasMatch(phoneOrEmail);
-                      
-                      if (isPhone) {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => const Center(child: CircularProgressIndicator()),
-                        );
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const Center(child: CircularProgressIndicator()),
+                      );
 
-                        try {
-                          String cleanPhone = phoneOrEmail.replaceAll(RegExp(r'[\+\s\-]'), '');
-                          if (cleanPhone.length == 10) cleanPhone = '91$cleanPhone';
-
-                          await ApiService().sendOtp(cleanPhone);
-                          
-                          if (mounted) {
-                            Navigator.pop(context); // Close loading
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => OtpVerificationScreen(
-                                  phoneNumber: phoneOrEmail.startsWith('+') ? phoneOrEmail : '+91 $phoneOrEmail',
-                                ),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (mounted) {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error: $e')),
-                            );
-                          }
+                      try {
+                        // Normalize phone/email before sending
+                        String normalizedInput = phoneOrEmail;
+                        if (!phoneOrEmail.contains('@')) {
+                          // If it's a phone number, strip non-digits and keep last 10
+                          String clean = phoneOrEmail.replaceAll(RegExp(r'\D'), '');
+                          normalizedInput = clean.length >= 10 ? clean.substring(clean.length - 10) : clean;
                         }
-                      } else {
-                        // Email/Password login (not yet implemented in backend, but keeping fallback)
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => const HomeScreen()),
-                          (route) => false,
-                        );
+
+                        // Attempt Direct Password Login
+                        final response = await ApiService().login(normalizedInput, password);
+                        
+                        if (mounted) {
+                          Navigator.pop(context); // Close loading
+                          
+                          // Save Token and User in AppState and ApiService
+                          final responseData = response.data;
+                          if (responseData['token'] != null) {
+                            ApiService().setToken(responseData['token']);
+                          }
+                          AppState().updateFromMap(responseData);
+                          
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                            (route) => false,
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          Navigator.pop(context);
+                          String errorMsg = e.toString();
+                          if (e is DioException && e.response?.data != null) {
+                            errorMsg = e.response?.data['error'] ?? errorMsg;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(errorMsg)),
+                          );
+                        }
                       }
                     },
                     child: Container(
-                  width: double.infinity,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryBrownGold,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Login',
-                      style: GoogleFonts.manrope(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                      width: double.infinity,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBrownGold,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryBrownGold.withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Login',
+                          style: GoogleFonts.manrope(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-    ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Login with OTP Option
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginWithOtpScreen(
+                            initialPhone: _emailController.text,
+                            initialPassword: _passwordController.text,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Login with OTP instead',
+                      style: GoogleFonts.inter(
+                        color: AppColors.primaryBrownGold,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                   
                   const SizedBox(height: 48),
                   
@@ -252,6 +296,7 @@ class _LoginScreenState extends State<LoginScreen> {
     required String hintText,
     required TextEditingController controller,
     bool obscureText = false,
+    List<TextInputFormatter>? formatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,6 +319,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: TextField(
             controller: controller,
             obscureText: obscureText,
+            inputFormatters: formatters,
             style: GoogleFonts.inter(
               color: const Color(0xFF1A1C1C),
               fontSize: 16,

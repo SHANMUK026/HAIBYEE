@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../invest/invest_screen.dart';
 import '../../widgets/price_chart.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/price_data.dart';
+import '../../utils/extensions.dart';
 
 class PriceTrendsScreen extends StatefulWidget {
   final bool initialIsGold;
@@ -170,7 +172,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          isGoldSelected ? '+19.58%' : '+25.75%',
+          PriceData.getPerformance(isGoldSelected, selectedTimeframe),
           style: GoogleFonts.manrope(
             color: const Color(0xFF236E35),
             fontSize: 40,
@@ -303,7 +305,7 @@ class _PriceTrendsScreenState extends State<PriceTrendsScreen> {
                 ),
               ),
               Text(
-                isGoldSelected ? '₹14,929.77/gm' : '₹234.49/gm',
+                '₹${(isGoldSelected ? PriceData.goldPrice : PriceData.silverPrice).toLocaleString()}/gm',
                 style: GoogleFonts.manrope(
                   fontSize: 22, 
                   fontWeight: FontWeight.w800, 

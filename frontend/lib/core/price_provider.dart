@@ -1,6 +1,7 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../utils/price_data.dart';
 import 'api_service.dart';
 
 class PriceProvider with ChangeNotifier {
@@ -33,6 +34,8 @@ class PriceProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         _goldPrice = response.data['gold']['price'].toDouble();
         _silverPrice = response.data['silver']['price'].toDouble();
+        // Synchronize static helper for non-reactive components
+        PriceData.updatePrices(_goldPrice, _silverPrice);
       }
     } catch (e) {
       debugPrint('Error fetching prices: $e');

@@ -92,7 +92,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     final double goldValue = goldGrams * PriceData.goldPrice;
     final double silverValue = silverGrams * PriceData.silverPrice;
     final double totalValue = goldValue + silverValue;
-    final double goldPercent = totalValue > 0 ? goldValue / totalValue : 0.7;
+    final double goldPercent = AppState().goldWeightRatio;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -122,13 +122,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               const SizedBox(height: 24),
               _buildAssetAllocation(goldPercent),
               const SizedBox(height: 24),
-              _buildMetalGrid(widget.goldBalance, widget.silverBalance, goldValue, silverValue),
+              _buildMetalGrid(goldValue, silverValue, goldPercent),
               const SizedBox(height: 24),
               _buildPerformanceChart(),
               const SizedBox(height: 24),
               _buildQuickActions(context),
               const SizedBox(height: 24),
-              _buildPortfolioTip(),
+              _buildPortfolioTip(goldPercent),
               const SizedBox(height: 32),
               _buildRecentActivity(),
               const SizedBox(height: 32),
@@ -220,7 +220,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 const Icon(Icons.arrow_upward_rounded, size: 14, color: Color(0xFF15803D)),
                 const SizedBox(width: 4),
                 Text(
-                  '+₹12,450 (8.2%)',
+                  '+₹${(AppState().totalSavingsThisMonth * 0.08).toStringAsFixed(0)} (8.2%)', // Simulating growth for now based on total savings
                   style: GoogleFonts.inter(
                     color: const Color(0xFF15803D),
                     fontSize: 13,
@@ -368,18 +368,18 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
-  Widget _buildMetalGrid(double goldBalance, double silverBalance, double goldValue, double silverValue) {
+  Widget _buildMetalGrid(double goldValue, double silverValue, double goldPercent) {
     final formatter = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
-    final goldGm = goldBalance / 6200.0;
-    final silverGm = silverBalance / 75.0;
+    final goldGrams = AppState().goldGrams;
+    final silverGrams = AppState().silverGrams;
 
     return Row(
       children: [
         Expanded(
           child: _buildMetalSmallCard(
-            'GOLD (${goldGm.toStringAsFixed(2)} GM)',
+            'GOLD (${goldGrams.toStringAsFixed(2)} GM)',
             formatter.format(goldValue),
-            '23%',
+            '${(goldPercent * 100).toStringAsFixed(0)}%',
             const Color(0xFFF5EDE3),
             const Color(0xFFC8A27B),
             Icons.savings_rounded,
@@ -388,9 +388,9 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         const SizedBox(width: 16),
         Expanded(
           child: _buildMetalSmallCard(
-            'SILVER (${silverGm.toStringAsFixed(2)} GM)',
+            'SILVER (${silverGrams.toStringAsFixed(2)} GM)',
             formatter.format(silverValue),
-            '23%',
+            '${((1 - goldPercent) * 100).toStringAsFixed(0)}%',
             const Color(0xFFF3F4F6),
             const Color(0xFF94A3B8),
             Icons.monetization_on_rounded,
@@ -566,7 +566,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
-  Widget _buildPortfolioTip() {
+  Widget _buildPortfolioTip(double goldPercent) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -579,7 +579,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              'Gold contributes 48% of your total portfolio. Consider balancing with more silver for long-term growth.',
+              'Gold contributes ${(goldPercent * 100).toStringAsFixed(0)}% of your total portfolio. ${goldPercent > 0.6 ? 'Consider balancing with more silver for long-term growth.' : 'Maintaining a healthy balance is key.'}',
               style: GoogleFonts.inter(
                 color: const Color(0xFF92400E),
                 fontSize: 12,
@@ -606,9 +606,35 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        _buildActivityItem('Bought Gold', '12 Oct • 10:45 AM', '+ ₹2,500', '0.14 GM', Icons.shopping_bag_rounded, AppColors.primaryBrownGold),
-        _buildActivityItem('Saved Weekly', '05 Oct • 02:20 AM', '+ ₹500', 'SYSTEMIC', Icons.auto_graph_rounded, Colors.blue),
-        _buildActivityItem('Withdrawn', '28 Sep • 04:30 PM', '- ₹1,200', 'TO BANK', Icons.account_balance_rounded, Colors.red),
+        if (AppState().recentActivity.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                'No recent activity',
+                style: GoogleFonts.inter(color: Colors.grey, fontSize: 13),
+              ),
+            ),
+          )
+        else
+          ...AppState().recentActivity.map((t) {
+            bool isBuy = t['type'] == 'BUY';
+            String asset = t['assetType'] ?? 'GOLD';
+            String title = isBuy ? 'Purchased $asset' : 'Sold $asset';
+            String amount = '${isBuy ? '+' : '-'} ₹${t['amount']}';
+            String sub = '${t['grams']} GM';
+            IconData icon = asset == 'GOLD' ? Icons.monetization_on_outlined : Icons.toll_outlined;
+            Color color = asset == 'GOLD' ? AppColors.primaryBrownGold : const Color(0xFF94A3B8);
+            
+            // Format time from createdAt
+            String timeStr = "Just now";
+            try {
+              final dt = DateTime.parse(t['createdAt'].toString());
+              timeStr = DateFormat('dd MMM • hh:mm a').format(dt);
+            } catch (_) {}
+
+            return _buildActivityItem(title, timeStr, amount, sub, icon, color);
+          }),
         const SizedBox(height: 24),
         Center(
           child: Text(

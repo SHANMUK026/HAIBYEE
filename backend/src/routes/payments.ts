@@ -56,19 +56,21 @@ router.post('/verify-payment', async (req, res) => {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
-      // Payment verified, update transaction and user portfolio
-      const transaction = await prisma.transaction.update({
-        where: { referenceId: razorpay_order_id },
-        data: { status: 'COMPLETED' },
-      });
+      // Payment verified, update transaction and user portfolio atomically
+      await prisma.$transaction(async (tx) => {
+        const transaction = await tx.transaction.update({
+          where: { referenceId: razorpay_order_id },
+          data: { status: 'COMPLETED' },
+        });
 
-      const gramsField = transaction.assetType === 'GOLD' ? 'goldGrams' : 'silverGrams';
-      
-      await prisma.portfolio.update({
-        where: { userId: transaction.userId },
-        data: {
-          [gramsField]: { increment: transaction.grams }
-        }
+        const gramsField = transaction.assetType === 'GOLD' ? 'goldGrams' : 'silverGrams';
+        
+        await tx.portfolio.update({
+          where: { userId: transaction.userId },
+          data: {
+            [gramsField]: { increment: transaction.grams }
+          }
+        });
       });
 
       return res.status(200).json({ message: "Payment verified successfully" });

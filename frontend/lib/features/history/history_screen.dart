@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/app_state.dart';
+import 'package:intl/intl.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -13,40 +15,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String selectedFilter = 'All';
   String searchQuery = '';
 
-  final List<Map<String, dynamic>> _allTransactions = [
-    {
-      'title': 'Gold Delivery',
-      'time': '11:30 AM',
-      'amount': '2.00 g',
-      'type': 'Delivery',
-      'status': 'Minting',
-      'date': 'TODAY',
-      'icon': Icons.local_shipping_outlined,
-      'color': AppColors.primaryBrownGold,
-      'tracking': ['Ordered', 'Minting', 'Dispatched', 'Delivered'],
-      'currentStep': 1,
-    },
-    {
-      'title': 'Silver Delivery',
-      'time': '04:15 PM',
-      'amount': '50.00 g',
-      'type': 'Delivery',
-      'status': 'Delivered',
-      'date': 'YESTERDAY',
-      'icon': Icons.local_shipping_outlined,
-      'color': const Color(0xFF94A3B8),
-      'tracking': ['Ordered', 'Minting', 'Dispatched', 'Delivered'],
-      'currentStep': 3,
-    },
-  ];
+  List<Map<String, dynamic>> get _allTransactions => AppState().transactions;
 
   List<Map<String, dynamic>> get _filteredTransactions {
     return _allTransactions.where((t) {
-      bool categoryMatch = selectedFilter == 'All' || t['type'] == selectedFilter;
-      bool searchMatch = t['title'].toString().toLowerCase().contains(searchQuery.toLowerCase()) ||
+      final title = t['title'] ?? (t['type'] == 'BUY' ? 'Buy ${t['assetType']}' : 'Sell ${t['assetType']}');
+      bool categoryMatch = selectedFilter == 'All' || 
+                           (selectedFilter == 'Gold' && t['assetType'] == 'GOLD') ||
+                           (selectedFilter == 'Silver' && t['assetType'] == 'SILVER');
+      
+      bool searchMatch = title.toString().toLowerCase().contains(searchQuery.toLowerCase()) ||
                         t['amount'].toString().toLowerCase().contains(searchQuery.toLowerCase());
       return categoryMatch && searchMatch;
     }).toList();
+  }
+
+  String _formatDate(dynamic date) {
+    if (date == null) return "Unknown";
+    try {
+      final dt = DateTime.parse(date.toString());
+      final now = DateTime.now();
+      if (dt.day == now.day && dt.month == now.month && dt.year == now.year) return "TODAY";
+      final yesterday = now.subtract(const Duration(days: 1));
+      if (dt.day == yesterday.day && dt.month == yesterday.month && dt.year == yesterday.year) return "YESTERDAY";
+      return DateFormat('dd MMM yyyy').format(dt);
+    } catch (_) {
+      return date.toString();
+    }
+  }
+
+  String _formatTime(dynamic date) {
+    if (date == null) return "";
+    try {
+      final dt = DateTime.parse(date.toString());
+      return DateFormat('hh:mm a').format(dt);
+    } catch (_) {
+      return "";
+    }
   }
 
   @override
@@ -182,40 +187,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     Map<String, List<Map<String, dynamic>>> groups = {};
     for (var t in filtered) {
-      String dateLabel = t['date'];
+      String dateLabel = _formatDate(t['createdAt']);
       groups.putIfAbsent(dateLabel, () => []).add(t);
     }
 
     List<Widget> children = [];
-    final order = ['TODAY', 'YESTERDAY'];
+    // Process unique dates in order
+    final dates = groups.keys.toList();
     
-    for (var label in order) {
-      if (groups.containsKey(label)) {
-        children.add(
-          Padding(
-            padding: const EdgeInsets.only(top: 24, bottom: 12),
-            child: Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                color: const Color(0xFF64748B),
-                letterSpacing: 0.6,
-              ),
+    for (var label in dates) {
+      children.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 24, bottom: 12),
+          child: Text(
+            label.toUpperCase(),
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF64748B),
+              letterSpacing: 0.6,
             ),
           ),
-        );
-        children.addAll(groups[label]!.map((t) => _buildTransactionItem(t)));
-      }
+        ),
+      );
+      children.addAll(groups[label]!.map((t) => _buildTransactionItem(t)));
     }
     return children;
   }
 
   Widget _buildTransactionItem(Map<String, dynamic> t) {
-    bool isCredit = t['status'] == 'Credited';
+    bool isBuy = t['type'] == 'BUY';
+    String assetType = t['assetType'] ?? 'GOLD';
+    IconData icon = assetType == 'GOLD' ? Icons.monetization_on_outlined : Icons.toll_outlined;
+    Color color = assetType == 'GOLD' ? AppColors.primaryBrownGold : const Color(0xFF94A3B8);
+    String title = isBuy ? 'Purchased $assetType' : 'Sold $assetType';
     
     return GestureDetector(
-      onTap: t['type'] == 'Delivery' ? () => _showTrackingDetails(t) : null,
+      onTap: () => _showTrackingDetails(t),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
@@ -223,13 +231,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFF1F5F9)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ],
         ),
         child: Row(
           children: [
@@ -237,10 +238,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: t['color'].withOpacity(0.1),
+                color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(t['icon'], color: t['color'], size: 22),
+              child: Icon(icon, color: color, size: 22),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -248,7 +249,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    t['title'],
+                    title,
                     style: GoogleFonts.manrope(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -256,11 +257,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ),
                   ),
                   Text(
-                    t['time'],
+                    _formatTime(t['createdAt']),
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       color: const Color(0xFF64748B),
-                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -270,11 +270,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  (isCredit ? '+' : (t['type'] == 'Delivery' ? '' : '-')) + t['amount'],
+                  '${isBuy ? '-' : '+'}${t['grams']} g',
                   style: GoogleFonts.manrope(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
-                    color: isCredit ? const Color(0xFF16A34A) : const Color(0xFF0F172A),
+                    color: !isBuy ? const Color(0xFF16A34A) : const Color(0xFF0F172A),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -475,7 +475,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                '₹1,12,450.00',
+                NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2).format(AppState().totalSavingsThisMonth),
                 style: GoogleFonts.manrope(
                   color: Colors.black,
                   fontSize: 32,

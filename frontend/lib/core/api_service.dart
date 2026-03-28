@@ -33,6 +33,10 @@ class ApiService {
     return await _dio.post(path, data: data);
   }
 
+  Future<Response> get(String path) async {
+    return await _dio.get(path);
+  }
+
   // Add interceptors for JWT token
   void setToken(String token) {
     _dio.options.headers['Authorization'] = 'Bearer $token';

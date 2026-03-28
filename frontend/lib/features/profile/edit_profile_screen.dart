@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/app_state.dart';
 import '../../theme/app_colors.dart';
+import '../../core/api_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -14,6 +15,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _nameController = TextEditingController(text: AppState().userName);
   final TextEditingController _emailController = TextEditingController(text: AppState().userEmail);
   final TextEditingController _phoneController = TextEditingController(text: AppState().userPhone);
+  bool _isSaving = false;
 
   @override
   void dispose() {
@@ -23,20 +25,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  void _saveProfile() {
-    setState(() {
-      AppState().userName = _nameController.text;
-      AppState().userEmail = _emailController.text;
-      AppState().userPhone = _phoneController.text;
-    });
+  Future<void> _saveProfile() async {
+    setState(() => _isSaving = true);
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Profile updated successfully'),
-        backgroundColor: Color(0xFF16A34A),
-      ),
-    );
-    Navigator.pop(context, true);
+    try {
+      // 1. Update in Backend Database
+      await ApiService().updateProfile(
+        _nameController.text,
+        _emailController.text,
+      );
+
+      // 2. Update Local App State
+      setState(() {
+        AppState().userName = _nameController.text;
+        AppState().userEmail = _emailController.text;
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profile updated successfully'),
+            backgroundColor: Color(0xFF16A34A),
+          ),
+        );
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update profile: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   @override
@@ -107,23 +132,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const SizedBox(height: 20),
             _buildField('EMAIL ADDRESS', _emailController, Icons.email_outlined),
             const SizedBox(height: 20),
-            _buildField('PHONE NUMBER', _phoneController, Icons.phone_outlined, keyboardType: TextInputType.phone),
+            _buildField('PHONE NUMBER', _phoneController, Icons.phone_outlined, keyboardType: TextInputType.phone, readOnly: true),
             const SizedBox(height: 48),
             SizedBox(
               width: double.infinity,
               height: 60,
               child: ElevatedButton(
-                onPressed: _saveProfile,
+                onPressed: _isSaving ? null : _saveProfile,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryBrownGold,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   elevation: 0,
+                  disabledBackgroundColor: AppColors.primaryBrownGold.withOpacity(0.6),
                 ),
-                child: Text(
-                  'Save Changes',
-                  style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
+                child: _isSaving
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : Text(
+                        'Save Changes',
+                        style: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
               ),
             ),
           ],
@@ -132,7 +164,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildField(String label, TextEditingController controller, IconData icon, {TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildField(String label, TextEditingController controller, IconData icon, {TextInputType keyboardType = TextInputType.text, bool readOnly = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -154,8 +186,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           child: TextField(
             controller: controller,
+            readOnly: readOnly,
             keyboardType: keyboardType,
-            style: GoogleFonts.manrope(fontWeight: FontWeight.w600, fontSize: 16),
+            style: GoogleFonts.manrope(
+              fontWeight: FontWeight.w600, 
+              fontSize: 16,
+              color: readOnly ? const Color(0xFF64748B) : const Color(0xFF1B1C1E),
+            ),
             decoration: InputDecoration(
               prefixIcon: Icon(icon, color: const Color(0xFF64748B), size: 20),
               border: InputBorder.none,

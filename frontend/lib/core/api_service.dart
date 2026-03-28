@@ -80,6 +80,13 @@ class ApiService {
     return await _dio.get('profile/transactions');
   }
 
+  Future<Response> updateProfile(String name, String email) async {
+    return await _dio.patch('profile/update', data: {
+      'name': name,
+      'email': email,
+    });
+  }
+
   // Price Methods
   Future<Response> getLivePrices() async {
     return await _dio.get('prices/live');

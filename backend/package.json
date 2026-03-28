@@ -5,9 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "npm run prisma:deploy && node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc && npx prisma generate"
+    "build": "tsc && npx prisma generate",
+    "prisma:deploy": "npx prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "6.2.1",

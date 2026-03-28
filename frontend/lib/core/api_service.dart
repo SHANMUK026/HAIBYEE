@@ -4,12 +4,17 @@ import 'package:dio/dio.dart';
 
 class ApiService {
   // Automatically detect machine IP or localhost
-  static String get _ip {
-     if (!kIsWeb && Platform.isWindows) return 'localhost';
-     return '10.102.114.33'; 
+  // Automatically switch between local and production
+  static String get _baseUrl {
+    if (kReleaseMode) {
+      // REPLACE THIS with your Render/Railway URL once deployed!
+      return 'https://silvra-backend.onrender.com/api/'; 
+    }
+    
+    // Developer Local IP / Windows Localhost
+    final ip = (!kIsWeb && Platform.isWindows) ? 'localhost' : '10.102.114.33';
+    return 'http://$ip:3000/api/';
   }
-  
-  static String get _baseUrl => 'http://$_ip:3000/api/'; 
 
   final Dio _dio = Dio(BaseOptions(
     baseUrl: _baseUrl,

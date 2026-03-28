@@ -226,7 +226,7 @@ class _LoginWithOtpScreenState extends State<LoginWithOtpScreen> {
             
             const SizedBox(height: 64),
             
-            // Security Badge
+            // Security Badge - Wrapped to prevent overflow
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
@@ -238,12 +238,14 @@ class _LoginWithOtpScreenState extends State<LoginWithOtpScreen> {
                 children: [
                   const Icon(Icons.verified_user_rounded, color: Color(0xFF16A34A), size: 18),
                   const SizedBox(width: 8),
-                  Text(
-                    '100% secure & encrypted institutional custody',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF16A34A),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                  Flexible(
+                    child: Text(
+                      '100% secure & encrypted institutional custody',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF16A34A),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -261,8 +263,11 @@ class _LoginWithOtpScreenState extends State<LoginWithOtpScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 8,
               children: [
                 _footerLink('PRIVACY POLICY'),
                 _paddingDot(),

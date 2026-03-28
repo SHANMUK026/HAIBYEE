@@ -556,46 +556,66 @@ class _WealthCalculatorState extends State<WealthCalculator> {
   Widget _buildActionButtons(Color themeColor) {
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: () {
-            if (amount <= 0) return;
-            double price = PriceData.getPrice(isGold);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SummaryScreen(
-                isGold: isGold,
-                amount: amount,
-                grams: amount / price,
-              )),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: themeColor,
-            foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            elevation: 0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Start Investing', style: TextStyle(fontWeight: FontWeight.w800)),
-              const SizedBox(width: 8),
-              const Icon(Icons.trending_up, size: 20),
+        Container(
+          width: double.infinity,
+          height: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              colors: isGold 
+                ? [AppColors.primaryBrownGold, AppColors.accentBrownGold]
+                : [const Color(0xFF1F2937), const Color(0xFF374151)],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: (isGold ? AppColors.primaryBrownGold : const Color(0xFF1F2937)).withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              )
             ],
           ),
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsPlanScreen())),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF111827),
-            foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            elevation: 0,
+          child: ElevatedButton(
+            onPressed: () {
+              if (amount <= 0) return;
+              double price = PriceData.getPrice(isGold);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SummaryScreen(
+                  isGold: isGold,
+                  amount: amount,
+                  grams: amount / price,
+                )),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Start Investing', style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 16)),
+                const SizedBox(width: 12),
+                const Icon(Icons.trending_up_rounded, size: 20, color: Colors.white),
+              ],
+            ),
           ),
-          child: const Text('Set Monthly Plan', style: TextStyle(fontWeight: FontWeight.w800)),
+        ),
+        const SizedBox(height: 16),
+        TextButton(
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsPlanScreen())),
+          style: TextButton.styleFrom(
+            minimumSize: const Size(double.infinity, 56),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: const Color(0xFFE2E8F0)),
+            ),
+          ),
+          child: Text(
+            'Create Savings Plan', 
+            style: GoogleFonts.manrope(fontWeight: FontWeight.w800, color: const Color(0xFF1F2937)),
+          ),
         ),
       ],
     );

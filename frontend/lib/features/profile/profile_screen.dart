@@ -210,7 +210,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (AppState().kycStatus == "Pending")
             _buildSimulateApprovalButton(),
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              final updated = await Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen()));
+              if (updated == true) setState(() {});
+            },
             icon: const Icon(Icons.edit_note_rounded, color: Color(0xFF94A3B8)),
           ),
         ],

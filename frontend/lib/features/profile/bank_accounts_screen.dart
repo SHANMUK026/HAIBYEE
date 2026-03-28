@@ -48,10 +48,12 @@ class _BankAccountsScreenState extends State<BankAccountsScreen> {
                 if (accountController.text.isNotEmpty && ifscController.text.isNotEmpty) {
                   setState(() {
                     if (accountToEdit == null) {
+                      bool isFirst = AppState().bankAccounts.isEmpty;
                       AppState().bankAccounts.add(BankAccount(
                         accountHolder: holderController.text,
                         accountNumber: accountController.text,
                         ifsc: ifscController.text,
+                        isPrimary: isFirst,
                       ));
                     } else {
                       accountToEdit.accountHolder = holderController.text;

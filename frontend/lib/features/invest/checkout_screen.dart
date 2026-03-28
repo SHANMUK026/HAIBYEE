@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../home/home_screen.dart';
 import '../../utils/extensions.dart';
 import '../../theme/app_colors.dart';
+import '../home/payment_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
   final bool isGold;
@@ -26,7 +27,7 @@ class CheckoutScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -63,7 +64,7 @@ class CheckoutScreen extends StatelessWidget {
             ),
           ),
           if (isLargeAmount) _buildLimitNotice(),
-          _buildPayButton(isLargeAmount),
+          _buildPayButton(isLargeAmount, context),
         ],
       ),
     );
@@ -137,10 +138,10 @@ class CheckoutScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildUPIItem('Paytm', Icons.payment),
-            _buildUPIItem('PhonePe', Icons.account_balance_wallet),
-            _buildUPIItem('GPay', Icons.account_balance_wallet_rounded),
-            _buildUPIItem('Jupiter', Icons.rocket_launch),
+            _buildUPIItem('Paytm', Icons.account_balance_wallet_rounded),
+            _buildUPIItem('PhonePe', Icons.wallet_rounded),
+            _buildUPIItem('GPay', Icons.account_balance_wallet_outlined),
+            _buildUPIItem('Jupiter', Icons.rocket_launch_rounded),
           ],
         ),
       ],
@@ -252,8 +253,15 @@ class CheckoutScreen extends StatelessWidget {
             color: Colors.white,
             shape: BoxShape.circle,
             border: Border.all(color: const Color(0xFFF1F5F9)),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
+            ],
           ),
-          child: Icon(icon, color: Colors.red, size: 28),
+          child: Icon(
+            icon, 
+            color: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B), 
+            size: 28
+          ),
         ),
         const SizedBox(height: 10),
         Text(label, style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF64748B))),
@@ -279,7 +287,7 @@ class CheckoutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPayButton(bool isLarge) {
+  Widget _buildPayButton(bool isLarge, BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -311,7 +319,12 @@ class CheckoutScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PaymentScreen(amount: totalAmount)),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: isLarge ? const Color(0xFFE2E8F0) : (isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B)),
                 padding: const EdgeInsets.symmetric(vertical: 18),

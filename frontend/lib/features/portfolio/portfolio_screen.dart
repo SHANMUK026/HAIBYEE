@@ -16,10 +16,12 @@ import '../../theme/app_colors.dart';
 class PortfolioScreen extends StatefulWidget {
   final double goldBalance;
   final double silverBalance;
+  final bool hideBottomNav;
   const PortfolioScreen({
     super.key, 
     this.goldBalance = 42850.20, 
     this.silverBalance = 12450.75,
+    this.hideBottomNav = false,
   });
 
   @override
@@ -112,7 +114,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -140,10 +142,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavbar(
-        selectedIndex: -1, // Currently central is selected
+      bottomNavigationBar: widget.hideBottomNav ? null : CustomBottomNavbar(
+        selectedIndex: 2, // Highlight Portfolio
         onItemTapped: (index) {
-          if (index != -1) {
+          if (index != 2) {
             Navigator.pop(context, index);
           }
         },
@@ -181,10 +183,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     final formatter = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: const Color(0xFFF9F9F9),
         borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,11 +273,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   Widget _buildAssetAllocation(double goldPercent) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFF1F1F1)),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,11 +693,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   Widget _buildMarketInsights() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFF1F1F1)),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

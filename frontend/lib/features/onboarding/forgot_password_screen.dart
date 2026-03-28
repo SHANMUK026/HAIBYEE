@@ -206,21 +206,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             decoration: InputDecoration(
               prefixIcon: prefix != null 
                 ? Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [prefix],
+                    padding: const EdgeInsets.only(left: 16, right: 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        prefix,
+                        const SizedBox(width: 4),
+                      ],
                     ),
                   ) 
                 : null,
               hintText: hintText,
               hintStyle: GoogleFonts.inter(
                 color: const Color(0xFFD0C5AF),
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w400,
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
             ),
           ),
         ),

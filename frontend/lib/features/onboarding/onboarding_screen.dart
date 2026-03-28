@@ -133,54 +133,60 @@ class OnboardingScreen extends StatelessWidget {
               ),
             ),
 
-            // Content Section
+            // Content Section - 1:1 Figma Alignment & Spacing
             Positioned(
-              top: screenHeight * 0.44,
-              left: 40,
-              right: 40,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Easy ways to\n',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF0F172A),
-                            fontSize: 42,
-                            fontWeight: FontWeight.w400,
-                            height: 1.1,
-                            letterSpacing: -1.0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Easy ways to\n',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF0F172A),
+                              fontSize: 42,
+                              fontWeight: FontWeight.w400,
+                              height: 1.1,
+                              letterSpacing: -1.0,
+                            ),
                           ),
-                        ),
-                        TextSpan(
-                          text: 'manage your\nfinances',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF0F172A),
-                            fontSize: 42,
-                            fontWeight: FontWeight.w800,
-                            height: 1.1,
-                            letterSpacing: -1.0,
+                          TextSpan(
+                            text: 'manage your\nfinances',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF0F172A),
+                              fontSize: 42,
+                              fontWeight: FontWeight.w800,
+                              height: 1.1,
+                              letterSpacing: -1.0,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: 260,
-                    child: Text(
-                      'Buy, track, and grow your gold and silver investments in one place',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF64748B),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        height: 1.5,
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      // Constrain width to ensure text remains within 3 lines and looks premium
+                      width: screenWidth * 0.75,
+                      child: Text(
+                        'Buy, track, and grow your gold and silver investments in one place',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF64748B),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 48), // Spacing above SwipeButton (handled via bottomNav)
+                  ],
+                ),
               ),
             ),
 

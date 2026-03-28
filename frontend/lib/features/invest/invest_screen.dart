@@ -68,12 +68,12 @@ class _InvestScreenState extends State<InvestScreen> {
                   _buildGoldBarsImage(),
                   Container(
                     margin: const EdgeInsets.only(top: 100),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32),
                       ),
                     ),
                     child: Column(
@@ -123,18 +123,27 @@ class _InvestScreenState extends State<InvestScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: Icon(Icons.arrow_back_rounded, color: widget.isGold ? const Color(0xFF111827) : Colors.white),
+                icon: Icon(Icons.arrow_back_ios_new_rounded, color: widget.isGold ? const Color(0xFF111827) : Colors.white, size: 20),
                 onPressed: () => Navigator.pop(context),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+                  ],
                 ),
-                child: Text(
-                  'Need Help?',
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.black),
+                child: Row(
+                  children: [
+                    Icon(Icons.headset_mic_rounded, size: 14, color: AppColors.primaryBrownGold),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Help',
+                      style: GoogleFonts.manrope(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.black),
+                    ),
+                  ],
                 ),
               ),
             ],

@@ -97,7 +97,7 @@ class _KycScreenState extends State<KycScreen> {
   }
 
   Widget _buildDigiLockerStep() {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,16 +165,39 @@ class _KycScreenState extends State<KycScreen> {
             controller: _aadhaarController,
             keyboardType: TextInputType.number,
             maxLength: 12,
+            style: GoogleFonts.manrope(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 2.0,
+            ),
             decoration: InputDecoration(
               labelText: '12-Digit Aadhaar Number',
+              labelStyle: GoogleFonts.inter(
+                fontSize: 14,
+                color: const Color(0xFF64748B),
+                fontWeight: FontWeight.w500,
+              ),
               hintText: 'XXXX XXXX XXXX',
               counterText: '',
               prefixIcon: const Icon(Icons.badge_outlined),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              filled: true,
+              fillColor: const Color(0xFFF8FAFC),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: AppColors.primaryBrownGold, width: 2),
+              ),
             ),
           ),
           
-          const Spacer(),
+          const SizedBox(height: 40),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -323,7 +346,7 @@ class _KycScreenState extends State<KycScreen> {
   }
 
   Widget _buildOtpVerifyStep() {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,7 +376,7 @@ class _KycScreenState extends State<KycScreen> {
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 40),
           ElevatedButton(
             onPressed: isVerifying ? null : _verifyAadhaarOtp,
             style: ElevatedButton.styleFrom(

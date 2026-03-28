@@ -29,7 +29,7 @@ class SummaryScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -42,8 +42,8 @@ class SummaryScreen extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              color: const Color(0xFFF5EDE3),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              color: isGold ? const Color(0xFFF5EDE3) : const Color(0xFFF1F5F9),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -110,32 +110,42 @@ class SummaryScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CheckoutScreen(
-                  isGold: isGold,
-                  totalAmount: total,
-                  metalType: metal,
-                )),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B),
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              elevation: 0,
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: const Color(0xFFF1F5F9))),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CheckoutScreen(
+                      isGold: isGold,
+                      totalAmount: total,
+                      metalType: metal,
+                    )),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isGold ? AppColors.primaryBrownGold : const Color(0xFF1E293B),
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  elevation: 0,
+                ),
+                child: Text(
+                  'Next',
+                  style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white),
+                ),
+              ),
             ),
-            child: Text(
-              'Next',
-              style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white),
-            ),
-          ),
+          ],
         ),
       ),
     );

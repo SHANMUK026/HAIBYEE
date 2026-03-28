@@ -223,16 +223,17 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Column(
         children: [
           Text(
             '${frequency.toUpperCase()} SAVINGS',
             style: GoogleFonts.inter(
-              color: const Color(0xFF9CA3AF),
+              color: const Color(0xFF94A3B8),
               fontSize: 10,
               fontWeight: FontWeight.w800,
-              letterSpacing: 1,
+              letterSpacing: 1.5,
             ),
           ),
           const SizedBox(height: 24),
@@ -302,19 +303,25 @@ class _SavingsPlanScreenState extends State<SavingsPlanScreen> {
                 _amountController.text = amt.toStringAsFixed(0);
               });
             },
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
               margin: const EdgeInsets.only(right: 12),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               decoration: BoxDecoration(
-                color: selected ? Colors.white : const Color(0xFFF3F4F6),
+                color: selected ? Colors.white : const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(16),
-                border: selected ? Border.all(color: AppColors.primaryBrownGold, width: 2) : Border.all(color: Colors.transparent),
-                boxShadow: selected ? [BoxShadow(color: AppColors.primaryBrownGold.withOpacity(0.2), blurRadius: 10)] : null,
+                border: Border.all(
+                  color: selected ? AppColors.primaryBrownGold : const Color(0xFFE2E8F0), 
+                  width: selected ? 2 : 1
+                ),
+                boxShadow: selected ? [
+                  BoxShadow(color: AppColors.primaryBrownGold.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))
+                ] : null,
               ),
               child: Text(
                 '₹${amt.toInt()}',
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF1F2937),
+                  color: selected ? AppColors.primaryBrownGold : const Color(0xFF64748B),
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                 ),

@@ -57,7 +57,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF1A1C1C)),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1A1C1C), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -210,51 +210,56 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             const SizedBox(height: 48),
             
             // Withdraw Button
-            GestureDetector(
-              onTap: () {
-                final amount = double.tryParse(_amountController.text) ?? 0;
-                if (amount <= 0) {
-                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a valid amount')));
-                   return;
-                }
-                if (amount > currentBalance) {
-                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Insufficient ${isGold ? 'Gold' : 'Silver'} balance')));
-                   return;
-                }
-                if (_bankAccountController.text.isNotEmpty) {
-                  _showSuccessDialog();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill in bank details')),
-                  );
-                }
-              },
-              child: Container(
-                width: double.infinity,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF111827),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 15,
-                      offset: const Offset(0, 10),
-                    )
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    'Process Withdrawal',
-                    style: GoogleFonts.manrope(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+             Container(
+               width: double.infinity,
+               height: 60,
+               decoration: BoxDecoration(
+                 borderRadius: BorderRadius.circular(20),
+                 gradient: const LinearGradient(
+                   colors: [Color(0xFF111827), Color(0xFF374151)],
+                 ),
+                 boxShadow: [
+                   BoxShadow(
+                     color: Colors.black.withOpacity(0.2),
+                     blurRadius: 15,
+                     offset: const Offset(0, 8),
+                   )
+                 ],
+               ),
+               child: ElevatedButton(
+                 onPressed: () {
+                   final amount = double.tryParse(_amountController.text) ?? 0;
+                   if (amount <= 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a valid amount')));
+                      return;
+                   }
+                   if (amount > currentBalance) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Insufficient ${isGold ? 'Gold' : 'Silver'} balance')));
+                      return;
+                   }
+                   if (_bankAccountController.text.isNotEmpty) {
+                     _showSuccessDialog();
+                   } else {
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       const SnackBar(content: Text('Please fill in bank details')),
+                     );
+                   }
+                 },
+                 style: ElevatedButton.styleFrom(
+                   backgroundColor: Colors.transparent,
+                   shadowColor: Colors.transparent,
+                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                 ),
+                 child: Text(
+                   'Process Withdrawal',
+                   style: GoogleFonts.manrope(
+                     color: Colors.white,
+                     fontSize: 16,
+                     fontWeight: FontWeight.w800,
+                   ),
+                 ),
+               ),
+             ),
             const SizedBox(height: 40),
           ],
         ),

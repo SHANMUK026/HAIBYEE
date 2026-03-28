@@ -25,7 +25,9 @@ import '../../utils/extensions.dart';
 import '../../utils/app_state.dart';
 import '../../widgets/custom_bottom_navbar.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_colors.dart';
 import '../../core/api_service.dart';
+import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -169,7 +171,11 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return const PriceTrendsScreen(hideBackButton: true);
       case 2:
-        return PortfolioScreen(goldBalance: goldBalance, silverBalance: silverBalance);
+        return PortfolioScreen(
+          goldBalance: goldBalance, 
+          silverBalance: silverBalance,
+          hideBottomNav: true,
+        );
       case 3:
         return const RewardsScreen(hideBackButton: true);
       case 4:
@@ -184,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: topPadding + 10),
+          SizedBox(height: topPadding + 8),
           _buildHeader(),
           _buildWelcomeSection(),
           _buildBalanceCard(),
@@ -391,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.notifications_none_outlined, color: Color(0xFF111827), size: 22),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
-                onPressed: () {},
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen())),
               )
             ],
           ),
@@ -431,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(' 👋', style: GoogleFonts.inter(fontSize: 14)),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             "Let's Start Saving",
             style: GoogleFonts.manrope(
@@ -441,7 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
               letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             'Build your gold wealth consistently',
             style: GoogleFonts.inter(

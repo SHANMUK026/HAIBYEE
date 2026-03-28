@@ -49,20 +49,20 @@ class _OnboardingCarouselScreenState extends State<OnboardingCarouselScreen> {
     OnboardingData(
       titlePart1: 'The peak of ',
       titlePart2: 'Transparency',
-      description: 'Send the money from your internet\nbank that you want to switch to the\nekambiá account',
-      imagePath: 'assets/images/179f1230951fef2bfe9aa5205c55a8e6a0c1f5f4.png', // Assuming this is Slide 1
+      description: 'Send the money from your internet bank that you want to switch to the ekambiá account',
+      imagePath: 'assets/images/179f1230951fef2bfe9aa5205c55a8e6a0c1f5f4.png', 
     ),
     OnboardingData(
       titlePart1: 'Get Physical ',
       titlePart2: 'GOLD',
-      description: 'Send the money from your\ninternet bank that you want to\nswitch to the ekambiá account',
-      imagePath: 'assets/images/ca96d593588f5ab2e19313c6e9ee2b83417706b7.png', // Assuming this is Slide 2
+      description: 'Send the money from your internet bank that you want to switch to the ekambiá account',
+      imagePath: 'assets/images/ca96d593588f5ab2e19313c6e9ee2b83417706b7.png', 
     ),
     OnboardingData(
       titlePart1: 'Faster transfer ',
       titlePart2: 'of Gold',
-      description: 'Send the money from your\nbank that you want to SILVARA wallat account',
-      imagePath: 'assets/images/fd7a57ba6e4dd2b5e1a82344914d480e10a40b78.png', // Assuming this is Slide 3
+      description: 'Send the money from your bank that you want to SILVARA wallat account',
+      imagePath: 'assets/images/fd7a57ba6e4dd2b5e1a82344914d480e10a40b78.png', 
     ),
   ];
 
@@ -252,14 +252,19 @@ class OnboardingSlide extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  data.description,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF5A5C5C),
-                    fontSize: 18,
-                    height: 1.6,
-                    fontWeight: FontWeight.w400,
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.72,
+                  child: Text(
+                    data.description,
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF5A5C5C),
+                      fontSize: 16,
+                      height: 1.4,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
               ],
